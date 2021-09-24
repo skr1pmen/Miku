@@ -155,9 +155,9 @@ class UserCommands(commands.Cog):
         draw = ImageDraw.Draw(base)
         pfp = circle(pfp,size=(215,215))
 
-        font = ImageFont.truetype('arial.ttf', size=38)
-        AKAfont = ImageFont.truetype('arial.ttf', size=30)
-        subfont = ImageFont.truetype('arial.ttf', size=25)
+        font = ImageFont.truetype('img/arial.ttf', size=38)
+        AKAfont = ImageFont.truetype('img/arial.ttf', size=30)
+        subfont = ImageFont.truetype('img/arial.ttf', size=25)
 
         draw.text((280,240),name,font=font)
         draw.text((270,315),nick,font=AKAfont)
