@@ -6,6 +6,7 @@ import os
 from config import settings
 from discord.utils import get
 
+
 bot = commands.Bot(command_prefix=settings['prefix'], intents = discord.Intents.all())
 bot.remove_command('help')
 

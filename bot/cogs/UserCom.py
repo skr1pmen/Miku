@@ -1,18 +1,45 @@
 import asyncio
+from itertools import cycle
+from operator import setitem
 import discord
 from discord.ext import commands
 import random
+import psycopg2
 from config import settings
 import json
 import requests
+from PIL import Image, ImageFont, ImageDraw, ImageChops
+import io
 
 RandChoslo = ["Random.org","рандомайзеру","серверу"]
 Color = [0x000080,0x00ced1,0x00ffff,0x006400,0x00ff7f,0x7fff00,0x00fa9a,0xffd700,0x8b4513,0xb22222,0xff0000,0xff1493,0xd02090,0x9400d3,0x8a2be2]
+
+def circle(pfp,size = (215,215)):
+    
+    pfp = pfp.resize(size, Image.ANTIALIAS).convert("RGBA")
+    
+    bigsize = (pfp.size[0] * 3, pfp.size[1] * 3)
+    mask = Image.new('L', bigsize, 0)
+    draw = ImageDraw.Draw(mask) 
+    draw.ellipse((0, 0) + bigsize, fill=255)
+    mask = mask.resize(pfp.size, Image.ANTIALIAS)
+    mask = ImageChops.darker(mask, pfp.split()[-1])
+    pfp.putalpha(mask)
+    return pfp
 
 class UserCommands(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+#Соединение с БД
+    global connection
+    global cursor
+    connection = psycopg2.connect(
+        dbname='d7npuuht675g6t',
+        user='dfelpwutbrsdwj',
+        password='84d0cfdcf95f22787066edbc6cac37e900a64943ad8629d9ad30e325c6e797cc',
+        host='ec2-44-198-223-154.compute-1.amazonaws.com')
+    cursor = connection.cursor()
 
 #Команда_clear
     @commands.command(pass_context=True, aliases=['чист', 'clear'])
@@ -109,33 +136,47 @@ class UserCommands(commands.Cog):
 
 #Команда_info
     @commands.command(pass_context= True, aliases=['инфо', 'info'])
-    async def __info(self, ctx, *, user: discord.Member = None):
-        if user is None:
-            user = ctx.author      
-        date_format = "%a, %d %b %Y %I:%M %p"
-        embed = discord.Embed(color=random.choice(Color), description=user.mention)
-        embed.set_author(name=str(user), icon_url=user.avatar_url)
-        embed.set_thumbnail(url=user.avatar_url)
-        embed.add_field(name="Присоеденился", value=user.joined_at.strftime(date_format))
-        members = sorted(ctx.guild.members, key=lambda m: m.joined_at)
-        embed.add_field(name="Участник по счёту", value=str(members.index(user)+1))
-        embed.add_field(name="Зарегистрировался", value=user.created_at.strftime(date_format))
-        if len(user.roles) > 1:
-            role_string = ' '.join([r.mention for r in user.roles][1:])
-            embed.add_field(name="Роли [{}]".format(len(user.roles)-1), value=role_string, inline=False)
-        perm_string = ', '.join([str(p[0]).replace("_", " ").title() for p in user.guild_permissions if p[1]])
-        embed.add_field(name="ID",value=str(user.id))
-        embed.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-        return await ctx.send(embed=embed)
+    async def __info(self, ctx,member: discord.Member = None):
+        if member is None:
+            member = ctx.author
+        name,nick,id,status = str(member),member.display_name,str(member.id),str(member.status).upper()
+        created_at = member.created_at.strftime("%a %b\n%B %Y")
+        joined_at = member.joined_at.strftime("%a %b\n%B %Y")
+        cursor.execute("SELECT cash FROM users WHERE id = {}".format(member.id))
+        money = str(cursor.fetchone()[0])
+        roles = str(len(member.roles)-1)
+        base = Image.open('img/base.png').convert('RGBA')
+        background = Image.open('img/bg.png').convert('RGBA')
+        pfp = member.avatar_url_as(size = 256)
+        data = io.BytesIO(await pfp.read())
+        pfp = Image.open(data).convert('RGBA')
+        name = f"{name[:16]}..." if len(name)>16 else name
+        nick = f"AKA:{nick[:17]}..." if len(nick)>17 else f"AKA:{nick}"
+        draw = ImageDraw.Draw(base)
+        pfp = circle(pfp,size=(215,215))
 
-    @__info.error
-    async def __info_error(self, ctx, error):
-        emb = discord.Embed(title= "",color = 0xff0000)
-        emb.add_field(name="Ошибка команды ``.info``:",value="Ты забыл ввести участника, повтори попытку)")
-        Mes = await ctx.send(embed = emb)
-        await ctx.message.delete()
-        await asyncio.sleep(10)
-        await Mes.delete()
+        font = ImageFont.truetype('arial.ttf', size=38)
+        AKAfont = ImageFont.truetype('arial.ttf', size=30)
+        subfont = ImageFont.truetype('arial.ttf', size=25)
+
+        draw.text((280,240),name,font=font)
+        draw.text((270,315),nick,font=AKAfont)
+        draw.text((65,490),id,font=subfont)
+        draw.text((405,490),status,font=subfont)
+
+        draw.text((65,632),created_at,font=subfont)
+        draw.text((405,632),joined_at,font=subfont)
+        draw.text((65,770),money,font=subfont)
+        draw.text((405,770),roles,font=subfont)
+        base.paste(pfp,(56,158),pfp)
+
+        background.paste(base,(0,0),base)
+
+        with io.BytesIO() as a:
+            background.save(a,"png")
+            a.seek(0)
+            await ctx.message.delete()
+            await ctx.send(file = discord.File(a, "profile.png"))
 
 #Комада_rules
     @commands.command(pass_context=True, aliases=['правила', 'rules'])
@@ -175,6 +216,8 @@ class UserCommands(commands.Cog):
             emb.add_field(name="kick",value="Команда кика пользователя с сервера с возможностью возвращения")
             emb.add_field(name="mute",value="Команда блокирует голос и возможность писать в чат токсичным пользователям")
             emb.add_field(name="invite",value="Команда отправляет пользователям приглащение на сервер с помощью id")
+            emb.add_field(name="balance",value="Команда для вывода баланса на сервере")
+            emb.add_field(name="shop",value="Команда открывает магазин доступных для покупки ролей")
             emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
             await ctx.send(embed = emb)
             await ctx.message.delete()
@@ -273,6 +316,20 @@ class UserCommands(commands.Cog):
             emb = discord.Embed(title= "",color = 0xffff00)
             emb.set_author(name= "Команда chess")
             emb.add_field(name="chess",value="Создание лобии для игры в Шахматы прямо в дискорде")
+            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+            await ctx.send(embed = emb)
+            await ctx.message.delete()
+        elif command == "balance":
+            emb = discord.Embed(title= "",color = 0xffff00)
+            emb.set_author(name= "Команда balance")
+            emb.add_field(name="balance",value="Команда для вывода баланса на сервере")
+            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+            await ctx.send(embed = emb)
+            await ctx.message.delete()
+        elif command == "shop":
+            emb = discord.Embed(title= "",color = 0xffff00)
+            emb.set_author(name= "Команда shop")
+            emb.add_field(name="shop",value="Команда открывает магазин доступных для покупки ролей")
             emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
             await ctx.send(embed = emb)
             await ctx.message.delete()

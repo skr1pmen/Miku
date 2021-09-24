@@ -19,7 +19,7 @@ class DefaultDiscordCommand(commands.Cog):
         else:
             print("Бот: {0}\nВерсия {0}: {1}\nДата создания: 8.03.2019\nДата перезапуска: 14.06.2021\nБот успешно запушен!" .format(self.bot.user.name,settings['version']))
             await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name="Версию {}".format(settings['version'])))
-    
+
     @commands.Cog.listener()
     async def on_message(self, message):
 
