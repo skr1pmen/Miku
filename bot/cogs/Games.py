@@ -5,7 +5,7 @@ from discord.ext.commands import context
 from discord.ext.commands.core import command
 import psycopg2
 import random
-from discord_components import DiscordComponents,Button,ButtonStyle
+from discord_components import DiscordComponents,Button,ButtonStyle, component
 
 class GamesForProgit(commands.Cog):
 
@@ -31,7 +31,16 @@ class GamesForProgit(commands.Cog):
             await asyncio.sleep(30)
             await Mes.delete()
             return
-        await ctx.send(
+        cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
+        resilts = cursor.fetchone()[0]
+        if coins > resilts:
+            emb = discord.Embed(color=0xa62019)
+            emb.add_field(name='❌ Ошибка!',value=f'Недостаточно денег для ставки!')
+            Mes = await ctx.send(embed = emb)
+            await ctx.message.delete()
+            await asyncio.sleep(30)
+            await Mes.delete()
+        Mes = await ctx.send(
             f'Ты поставил {coins} :leaves:\nВыбери сторону монетки.',
             components = [
                 Button(style=ButtonStyle.green,label='Орёл',id='one'),
@@ -41,17 +50,18 @@ class GamesForProgit(commands.Cog):
         responce = await self.bot.wait_for('button_click', check = lambda message: message.author == ctx.author)
         if responce.component.id == 'one':
             if side_coin == 1:
-                await responce.respond(content=f"Ты выбрал Орёл!\nВыпала Орёл!\nТы выйграл {coins*2}")
+                await Mes.edit(content=f"Ты выбрал Орёл!\nВыпала Орёл!\nТы выйграл {coins*2}",components=[])
+                # await responce.respond(content=f"Ты выбрал Орёл!\nВыпала Орёл!\nТы выйграл {coins*2}")
                 cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins,ctx.author.id))
             else:
-                await responce.respond(content=f"Ты выбрал Орёл!\nВыпала Решка!\nТы проиграл {coins}")
+                await Mes.edit(content=f"Ты выбрал Орёл!\nВыпала Решка!\nТы проиграл {coins}",components=[])
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(coins,ctx.author.id))
         elif responce.component.id == 'two':
             if side_coin == 1:
-                await responce.respond(content=f"Ты выбрал Решка!\nВыпала Решка!\nТы выйграл {coins*2}")
+                await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Решка!\nТы выйграл {coins*2}",components=[])
                 cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins,ctx.author.id))
             else:
-                await responce.respond(content=f"Ты выбрал Решка!\nВыпала Орёл!\nТы проиграл {coins}")
+                await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Орёл!\nТы проиграл {coins}",components=[])
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(coins,ctx.author.id))
         connection.commit()
 
