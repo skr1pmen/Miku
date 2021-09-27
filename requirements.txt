@@ -5,6 +5,7 @@ badges-io==1.0.8
 certifi==2021.5.30
 chardet==4.0.0
 charset-normalizer==2.0.6
+discord-components==2.1.1
 discord.py==1.7.3
 idna==3.2
 multidict==5.1.0
