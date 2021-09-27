@@ -34,7 +34,7 @@ class StastUsers(commands.Cog):
             id INT,
             cost BIGINT            
         )""")
-
+        
         for guild in self.bot.guilds:
             for member in guild.members:
                 cursor.execute(f"SELECT id FROM users WHERE id = {member.id}")
@@ -51,7 +51,7 @@ class StastUsers(commands.Cog):
         cursor.execute(f"SELECT id FROM users WHERE id = {member.id}")
         results = cursor.fetchone()
         if results is None:
-            cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0)")
+            cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{member.guild.id}')")
             connection.commit()
         else:
             pass
@@ -160,10 +160,11 @@ class StastUsers(commands.Cog):
 
     @commands.command(aliases = ['leaderboard', 'лидерборд'])
     async def __leaderboard(self,ctx):
-        embed = discord.Embed(title = 'Топ 10 сервера')
+        embed = discord.Embed(title = 'Топ 10 сервера', color = 0x00d166)
         counter = 0
-    
-        for row in cursor.execute("SELECT name, cash FROM users WHERE server_id = {} ORDER BY cash DESC LIMIT 10".format(ctx.guild.id)):
+        cursor.execute("SELECT name, cash FROM users WHERE server_id = {} ORDER BY cash DESC LIMIT 10".format(ctx.guild.id))
+        resilt = cursor.fetchall()
+        for row in resilt:
             counter += 1
             embed.add_field(
                 name = f'# {counter} | `{row[0]}`',
