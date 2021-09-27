@@ -1,6 +1,7 @@
 import discord
 from discord import embeds
 from discord.ext import commands
+from discord.ext.commands.core import command
 import psycopg2
 from datetime import datetime
 import threading
@@ -24,7 +25,8 @@ class StastUsers(commands.Cog):
         cursor.execute("""CREATE TABLE IF NOT EXISTS users(
             name TEXT,
             id BIGINT,
-            cash BIGINT
+            cash BIGINT,
+            server_id BIGINT
         )""")
 
         cursor.execute("""CREATE TABLE IF NOT EXISTS shop(
@@ -38,7 +40,7 @@ class StastUsers(commands.Cog):
                 cursor.execute(f"SELECT id FROM users WHERE id = {member.id}")
                 results = cursor.fetchone()
                 if results is None:
-                    cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0)")
+                    cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{guild.id}')")
                 else:
                     pass
         connection.commit()
@@ -155,6 +157,21 @@ class StastUsers(commands.Cog):
                 await ctx.message.delete()
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(resilts_one, ctx.author.id))
                 await ctx.send(embed=discord.Embed(description = "✅ Покупка прошла успешно!", color = 0x00d166))
+
+    @commands.command(aliases = ['leaderboard', 'лидерборд'])
+    async def __leaderboard(self,ctx):
+        embed = discord.Embed(title = 'Топ 10 сервера')
+        counter = 0
+    
+        for row in cursor.execute("SELECT name, cash FROM users WHERE server_id = {} ORDER BY cash DESC LIMIT 10".format(ctx.guild.id)):
+            counter += 1
+            embed.add_field(
+                name = f'# {counter} | `{row[0]}`',
+                value = f'Баланс: {row[1]}',
+                inline = False
+            )
+    
+        await ctx.send(embed = embed)
 
 def checkTime():
     threading.Timer(1, checkTime).start()
