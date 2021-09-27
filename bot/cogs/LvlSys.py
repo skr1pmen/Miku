@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord import embeds
 from discord.ext import commands
@@ -90,6 +91,14 @@ class StastUsers(commands.Cog):
                 cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {member.id}")
                 connection.commit()
                 await ctx.message.add_reaction('✅')
+    @__give.error
+    async def __give_error(self, ctx, error):
+        emb = discord.Embed(color=0xa62019)
+        emb.add_field(name='❌ Ошибка команды ``.give``!',value=f'У вас недостаточно прав!')
+        Mes = await ctx.send(embed = emb)
+        await ctx.message.delete()
+        await asyncio.sleep(10)
+        await Mes.delete()  
     
     @commands.command(pass_context=True, aliases=['add-shop','добавить-роль'])
     @commands.has_permissions(administrator=True)
@@ -109,6 +118,14 @@ class StastUsers(commands.Cog):
                 connection.commit()
                 await ctx.message.delete()
                 await ctx.send(embed=discord.Embed(description = "Роль добавлена в магазин!"))
+    @__add_shop.error
+    async def __add_shop_error(self, ctx, error):
+        emb = discord.Embed(color=0xa62019)
+        emb.add_field(name='❌ Ошибка команды ``.add_shop``!',value=f'У вас недостаточно прав!')
+        Mes = await ctx.send(embed = emb)
+        await ctx.message.delete()
+        await asyncio.sleep(10)
+        await Mes.delete()
 
     @commands.command(pass_context=True, aliases=['remove-shop','удалить-роль'])
     @commands.has_permissions(administrator=True)
@@ -121,6 +138,14 @@ class StastUsers(commands.Cog):
             connection.commit()
             await ctx.message.delete()
             await ctx.send(embed=discord.Embed(description = "Роль удалена из магазина!"))
+    @__remove_shop.error
+    async def __remove_shop_error(self, ctx, error):
+        emb = discord.Embed(color=0xa62019)
+        emb.add_field(name='❌ Ошибка команды ``.remove_shop``!',value=f'У вас недостаточно прав!')
+        Mes = await ctx.send(embed = emb)
+        await ctx.message.delete()
+        await asyncio.sleep(10)
+        await Mes.delete()
 
     @commands.command(pass_context=True, aliases=['shop','магазин'])
     async def __shop(self, ctx):
