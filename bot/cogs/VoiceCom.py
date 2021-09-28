@@ -18,6 +18,9 @@ class VoiceCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    if not discord.opus.is_loaded():
+        discord.opus.load_opus('libopus.so')
+
     server, server_id, name_channel = None,None,None
     global domains
     domains = ['https://www.youtube.com/','http://www.youtube.com/','https://youtu.be/','http://youtu.be/']
