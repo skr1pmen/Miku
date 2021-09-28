@@ -45,18 +45,18 @@ class VoiceCommands(commands.Cog):
         else:
             voice = await channel.connect()
     
-    @commands.command()
-    async def play(self,ctx, url):
-        await ctx.message.author.voice.channel.connect(reconnect=False)
-        YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
-        FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-        voice = get(self.bot.voice_clients, guild=ctx.guild)
-        # print(voice)
-        with YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(url, download=False)
-        URL = info['formats'][0]['url']
-        voice.play(FFmpegPCMAudio(executable="music/ffmpeg.exe", source =URL, **FFMPEG_OPTIONS))
-        voice.is_playing()
+    # @commands.command()
+    # async def play(self,ctx, url):
+    #     await ctx.message.author.voice.channel.connect(reconnect=False)
+    #     YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
+    #     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+    #     voice = get(self.bot.voice_clients, guild=ctx.guild)
+    #     # print(voice)
+    #     with YoutubeDL(YDL_OPTIONS) as ydl:
+    #         info = ydl.extract_info(url, download=False)
+    #     URL = info['formats'][0]['url']
+    #     voice.play(FFmpegPCMAudio(executable="music/ffmpeg.exe", source =URL, **FFMPEG_OPTIONS))
+    #     voice.is_playing()
 
 
 def setup(bot):
