@@ -24,6 +24,14 @@ class GamesForProgit(commands.Cog):
 #Монетка
     @commands.command(aliases = ['coin','монетка'])
     async def __coin(self,ctx,coins:int=None):
+        if coins < 0:
+            emb = discord.Embed(color=0xa62019)
+            emb.add_field(name='❌ Ошибка!',value=f'Ты ввел отрицательное число!')
+            Mes = await ctx.send(embed = emb)
+            await ctx.message.delete()
+            await asyncio.sleep(30)
+            await Mes.delete()
+            return False
         if coins is None:
             emb = discord.Embed(color=0xa62019)
             emb.add_field(name='❌ Ошибка!',value=f'Ты не поставил ставку!')
@@ -41,6 +49,7 @@ class GamesForProgit(commands.Cog):
             await ctx.message.delete()
             await asyncio.sleep(30)
             await Mes.delete()
+            return False
         Mes = await ctx.send(
             f'Ты поставил {coins} :leaves:\nВыбери сторону монетки.',
             components = [
