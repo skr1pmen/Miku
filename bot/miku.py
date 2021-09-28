@@ -142,6 +142,4 @@ async def on_voice_state_update(member, before, after):
             if len(before.channel.members) == 0:
                 await delete_channel(before.channel.guild, before.channel.id)
 
-
-
 bot.run(settings['token'])

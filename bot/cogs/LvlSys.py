@@ -1,7 +1,8 @@
 import asyncio
 import discord
 from discord import embeds
-from discord.ext import commands
+from discord import channel
+from discord.ext import commands,tasks
 from discord.ext.commands.core import command
 import psycopg2
 from datetime import datetime
@@ -35,6 +36,11 @@ class StastUsers(commands.Cog):
             id INT,
             cost BIGINT            
         )""")
+
+        cursor.execute("""CREATE TABLE IF NOT EXISTS CashCasino(
+            cash BIGINT,
+            server_id BIGINT
+        )""")
         
         for guild in self.bot.guilds:
             for member in guild.members:
@@ -44,6 +50,12 @@ class StastUsers(commands.Cog):
                     cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{guild.id}')")
                 else:
                     pass
+            cursor.execute(f"SELECT cash FROM CashCasino WHERE server_id = {guild.id}")
+            serverCash = cursor.fetchone()
+            if serverCash is None:
+                cursor.execute(f"INSERT INTO CashCasino VALUES (0,'{guild.id}')")
+            else:
+                pass
         connection.commit()
         print("База данный загружена!")
 
@@ -210,7 +222,6 @@ def checkTime():
         print('Баллы били отправлены')
         cursor.execute(f"UPDATE users SET cash = cash + 10")
         connection.commit()
-
 
 checkTime()
 

@@ -21,6 +21,7 @@ class GamesForProgit(commands.Cog):
         host='ec2-44-198-223-154.compute-1.amazonaws.com')
     cursor = connection.cursor()
 
+#Монетка
     @commands.command(aliases = ['coin','монетка'])
     async def __coin(self,ctx,coins:int=None):
         if coins is None:
@@ -30,7 +31,7 @@ class GamesForProgit(commands.Cog):
             await ctx.message.delete()
             await asyncio.sleep(30)
             await Mes.delete()
-            return
+            return False
         cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
         resilts = cursor.fetchone()[0]
         if coins > resilts:
@@ -65,6 +66,65 @@ class GamesForProgit(commands.Cog):
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(coins,ctx.author.id))
         connection.commit()
 
-        
+#Казино
+    @commands.command(aliases=['casino','рулетка','казино'])
+    async def __casino(self,ctx,number:int=None):
+        cursor.execute("SELECT cash FROM cashcasino WHERE server_id = {}".format(ctx.guild.id))
+        jeckpot = cursor.fetchone()[0]
+        cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
+        balance = cursor.fetchone()[0]
+        if number is None:
+            emb = discord.Embed(
+                title = "Мини-Игра: 🎰 Казино",
+                description = f"Коротко о правилах:\n\
+                    •Начиная игру вы делаете фиксированную ставку в 10:leaves:\n\
+                    •цель игрока отгадать число от 000 до 999, если игрок отдагал число, то он получает Jeckpot\n\
+                    •Jeckpot составляет всю сумму которую проиграли предыдущие игроки\n\
+                    Jeckpot на данный момент составляет: {jeckpot}:leaves:",
+                color = 0x00d166
+            )
+            await ctx.send(embed = emb,
+                components = [
+                    Button(style=ButtonStyle.green,label='Начать игру!')
+                ])
+            
+            responce = await self.bot.wait_for('button_click', check = lambda message: message.author == ctx.author)
+            if responce.component.label == 'Начать игру!':
+                await ctx.send(embed = discord.Embed(description = "Для начала игры пропиши команду .casino и число от 0 до 999",color = 0x00d166))
+        else:
+            casinoResult = int(random.randint(0,999))
+            cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
+            resilts = cursor.fetchone()[0]
+            if 10 > resilts:
+                emb = discord.Embed(color=0xa62019)
+                emb.add_field(name='❌ Ошибка!',value=f'Недостаточно денег для ставки!')
+                Mes = await ctx.send(embed = emb)
+                await ctx.message.delete()
+                await asyncio.sleep(30)
+                await Mes.delete()
+            if number == casinoResult:
+                cursor.execute(f"UPDATE users SET cash = cash + {jeckpot} WHERE id = {ctx.author.id}")
+                cursor.execute("UPDATE cashcasino SET cash = cash - cahs WHERE server_id = {0}".format(ctx.guild.id))
+                cursor.execute("SELECT cash FROM cashcasino WHERE server_id = {}".format(ctx.guild.id))
+                jeckpot = cursor.fetchone()[0]
+                cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
+                balance = cursor.fetchone()[0]
+                connection.commit()
+                await ctx.send(
+                    f"Твоё число: {number}\nЧисло которое выпало: {casinoResult}\nПоздравляю, ты выйграл! Ты сорвал Jeckpot в размере: {jeckpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
+                )
+            else:
+                cursor.execute(f"UPDATE users SET cash = cash - 10 WHERE id = {ctx.author.id}")
+                cursor.execute("UPDATE CashCasino SET cash = cash + 10 WHERE server_id = {0}".format(ctx.guild.id))
+                cursor.execute("SELECT cash FROM cashcasino WHERE server_id = {}".format(ctx.guild.id))
+                jeckpot = cursor.fetchone()[0]
+                cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
+                balance = cursor.fetchone()[0]
+                connection.commit()
+                await ctx.send(
+                    f"Твоё число: {number}\nЧисло которое выпало: {casinoResult}\nСожалею, но ты проиграл!\nСумма Jeckpot'a теперь составляет: {jeckpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
+                )
+
+
 def setup(bot):
     bot.add_cog(GamesForProgit(bot))
