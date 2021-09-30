@@ -217,12 +217,16 @@ def checkTime():
     now = datetime.now()
 
     current_time = now.strftime("%H:%M:%S")
+    currentDay = datetime.now().day
 
     if(current_time == '04:00:00'):
         print('Баллы били отправлены')
         cursor.execute(f"UPDATE users SET cash = cash + 10")
-        connection.commit()
-
+    if currentDay == 1 and current_time == '04:00:00':
+        print("Jeckpot был увеличен!")
+        cursor.execute("UPDATE cashcasino SET cash = cash + cash")
+    connection.commit()
+        
 checkTime()
 
 def setup(bot):
