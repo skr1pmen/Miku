@@ -120,7 +120,7 @@ class GamesForProgit(commands.Cog):
                 balance = cursor.fetchone()[0]
                 connection.commit()
                 await ctx.send(
-                    f"Играет {ctx.suthor.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nПоздравляю, ты выйграл! Ты сорвал Jeckpot в размере: {jeckpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
+                    f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nПоздравляю, ты выйграл! Ты сорвал Jeckpot в размере: {jeckpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
                 )
             else:
                 cursor.execute(f"UPDATE users SET cash = cash - 10 WHERE id = {ctx.author.id}")
@@ -131,7 +131,7 @@ class GamesForProgit(commands.Cog):
                 balance = cursor.fetchone()[0]
                 connection.commit()
                 await ctx.send(
-                    f"Играет {ctx.suthor.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nСожалею, но ты проиграл!\nСумма Jeckpot'a теперь составляет: {jeckpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
+                    f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nСожалею, но ты проиграл!\nСумма Jeckpot'a теперь составляет: {jeckpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
                 )
 
 
