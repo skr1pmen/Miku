@@ -2,14 +2,17 @@ import asyncio
 from itertools import cycle
 from operator import setitem
 import discord
+from discord.embeds import Embed
 from discord.ext import commands
 import random
+from discord.ext.commands.core import has_permissions
 import psycopg2
 from config import settings
 import json
 import requests
 from PIL import Image, ImageFont, ImageDraw, ImageChops
 import io
+from discord_components import DiscordComponents,Button,ButtonStyle
 
 RandChoslo = ["Random.org","рандомайзеру","серверу"]
 Color = [0x000080,0x00ced1,0x00ffff,0x006400,0x00ff7f,0x7fff00,0x00fa9a,0xffd700,0x8b4513,0xb22222,0xff0000,0xff1493,0xd02090,0x9400d3,0x8a2be2]
@@ -199,156 +202,154 @@ class UserCommands(commands.Cog):
         await ctx.message.delete()
 
 #Команда_help
-    @commands.command(pass_context=True, aliases=['хелп', 'help'])
-    async def __help(self, ctx, command = None):
-        if command == None:
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Доступные команды")
-            emb.add_field(name="rules",value="Мику расскажет правила сервера у вас в личке")
-            emb.add_field(name="info",value="Выдает краткую информацию о пользователе ``.info @Miku#8252``.")
-            emb.add_field(name="clear",value="Удаляет сообщения в чате ``.clear 5``.")
-            emb.add_field(name="about",value="Мику расскажет о себе у вас в личке")
-            emb.add_field(name="rand",value="Мику выдаст тебе рандомное число в заданном тобой диапозоне чисел ``.rand 1 9999``.")
-            emb.add_field(name="status",value="Позволяет менять статус Мику")
-            emb.add_field(name="ban",value="Команда блокировки бользователя на сервере")
-            emb.add_field(name="unban",value="Команда разблокировки бользователя на сервере с помощью id")
-            emb.add_field(name="banlist",value="Команда вывода вписка всех забаненых пользователей сервера")
-            emb.add_field(name="kick",value="Команда кика пользователя с сервера с возможностью возвращения")
-            emb.add_field(name="mute",value="Команда блокирует голос и возможность писать в чат токсичным пользователям")
-            emb.add_field(name="invite",value="Команда отправляет пользователям приглащение на сервер с помощью id")
-            emb.add_field(name="balance",value="Команда для вывода баланса на сервере")
-            emb.add_field(name="shop",value="Команда открывает магазин доступных для покупки ролей")
-            emb.add_field(name="leaderboard",value="Команда вывода топ 10 богатых человек сервера")
-            emb.add_field(name="coin",value="Мини-Игра монетка")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
+    @commands.command(pass_context=True, aliases = ['хелп','help'])
+    async def __help1(self,ctx):
+        buttons = [
+            [
+                Button(style=ButtonStyle.green,label='rules'),
+                Button(style=ButtonStyle.green,label='info'),
+                Button(style=ButtonStyle.green,label='clear'),
+                Button(style=ButtonStyle.green,label='about'),
+                Button(style=ButtonStyle.green,label='rand')
+            ],
+            [
+                Button(style=ButtonStyle.green,label='status'),
+                Button(style=ButtonStyle.green,label='invite'),
+                Button(style=ButtonStyle.green,label='balance'),
+                Button(style=ButtonStyle.green,label='shop'),
+                Button(style=ButtonStyle.green,label='leaderboard'),
+            ],
+            [
+                Button(style=ButtonStyle.green,label='coin'),
+                Button(style=ButtonStyle.green,label='casino'),
+            ]
+        ]
+        buttons_adm = [
+            [
+                Button(style=ButtonStyle.green,label='rules'),
+                Button(style=ButtonStyle.green,label='info'),
+                Button(style=ButtonStyle.green,label='clear'),
+                Button(style=ButtonStyle.green,label='about'),
+                Button(style=ButtonStyle.green,label='rand')
+            ],
+            [
+                Button(style=ButtonStyle.green,label='status'),
+                Button(style=ButtonStyle.green,label='invite'),
+                Button(style=ButtonStyle.green,label='balance'),
+                Button(style=ButtonStyle.green,label='shop'),
+                Button(style=ButtonStyle.green,label='leaderboard'),
+            ],
+            [
+                Button(style=ButtonStyle.green,label='coin'),
+                Button(style=ButtonStyle.green,label='casino'),
+                Button(style=ButtonStyle.green,label='ban'),
+                Button(style=ButtonStyle.green,label='banlist'),
+                Button(style=ButtonStyle.green,label='unban'),
+            ],
+            [
+                Button(style=ButtonStyle.green,label='kick'),
+                Button(style=ButtonStyle.green,label='mute')
+            ]
+        ]
+        emb = discord.Embed(
+            title = 'Список команд',
+            description = "Ниже представлены кнопки со всеми командами на сервере. Нажав на кнопку, вы сможете увидеть подробности про команду.",
+            color = 0xffff00
+        )
+        if ctx.message.author.guild_permissions.administrator:
+            await ctx.send(embed = emb,components=buttons_adm)
             await ctx.message.delete()
-        elif command == "info":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда info")
-            emb.add_field(name="info",value="Выдает краткую информацию о пользователе ``.info @Miku#8252``.")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
+        else:
+            await ctx.send(embed = emb,components=buttons)
             await ctx.message.delete()
-        elif command == "rand":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда rand")
-            emb.add_field(name="rand",value="Мику выдаст тебе рандомное число в заданном тобой диапозоне чисел ``.rand 1 9999``.")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "rules":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда rules")
-            emb.add_field(name="rules",value="Мику расскажет правила сервера у вас в личке")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "delete":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда clear")
-            emb.add_field(name="clear",value="Удаляет сообщения в чате ``.clear 5``.")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "about":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда about")
-            emb.add_field(name="about",value="Мику расскажет о себе")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "status":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда status")
-            emb.add_field(name="status",value="Позволяет менять статус Мику")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "ban":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда ban")
-            emb.add_field(name="ban",value="Команда блокировки бользователя на сервере")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "unban":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда unban")
-            emb.add_field(name="unban",value="Команда разблокировки бользователя на сервере с помощью id")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "banlist":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда banlist")
-            emb.add_field(name="banlist",value="Команда вывода вписка всех забаненых пользователей сервера")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "kick":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда kick")
-            emb.add_field(name="kick",value="Команда кика пользователя с сервера с возможностью возвращения")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "mute":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда mute")
-            emb.add_field(name="mute",value="Команда блокирует голос и возможность писать в чат токсичным пользователям")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "invite":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда invite")
-            emb.add_field(name="invite",value="Команда отправляет пользователям приглащение на сервер с помощью id")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "youtube":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда youtube")
-            emb.add_field(name="youtube",value="Создание лобии для просмотра YouTube прямо в дискорде")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "chess":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда chess")
-            emb.add_field(name="chess",value="Создание лобии для игры в Шахматы прямо в дискорде")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "balance":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда balance")
-            emb.add_field(name="balance",value="Команда для вывода баланса на сервере")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "shop":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда shop")
-            emb.add_field(name="shop",value="Команда открывает магазин доступных для покупки ролей")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "leaderboard":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда leaderboard")
-            emb.add_field(name="leaderboard",value="Команда вывода топ 10 богатых человек сервера")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-        elif command == "coin":
-            emb = discord.Embed(title= "",color = 0xffff00)
-            emb.set_author(name= "Команда coin")
-            emb.add_field(name="coin",value="Мини-Игра монетка")
-            emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
+
+        while True:
+            responce = await self.bot.wait_for('button_click')
+            if responce.component.label == 'rules':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="rules/правила",value="Мику отправит список всех правил в личку")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'info':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="info/инфо",value="Муки выыедет карточку с информацией о любом пользователе")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'clear':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="clear/чист",value="Команда для удаления лишних сообщений (доступна частникам с ролью 🔰 Бог и выше)")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'about':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="about/ктоты",value="Мику расскажет немного о себе в лс")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'rand':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="rand/ранд",value="Выдача рандомного числа в заданных пользователем рамках")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'status':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="status/статус",value="Присвоение Мику кастомного статуса")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'invite':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="invite/инвайт",value="Приглашения участников на сервер по его ID")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'balance':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="balance/баланс",value="Команда выведет балас любого пользователя на сервере")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'shop':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="shop/магазин",value="Вывод магазина ролей доступных для покупки")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'leaderboard':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="leaderboard/лидерборд",value="Вывод топ 10 самых богатых участников сервера")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'coin':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="coin/монетка",value="Мини-Игра \"Монетка\" для зароботка баланса")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'casino':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="casino/рулетка/казино",value="Мини-Игра \"🎰 Казино\" для зароботка баланса")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'ban':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="ban/бан",value="Бан пользователя ``.ban @user``")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'banlist':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="banlist/банлист",value="Выдаст список забаненых людей в лс")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'unban':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="unban/разбан",value="Разбан участника ``.unban {@user}``")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'kick':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="kick/кик",value="Удаление участника сервера с возможностью вернуться вновь ``.kick {@user}``")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'mute':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="mute/мут",value="Выдача мута пользователю на определённое время (в минутах) ``.kick {@user} {time}``")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
 
 #Команда_about
     @commands.command(pass_context=True, aliases=['ктоты', 'about'])
