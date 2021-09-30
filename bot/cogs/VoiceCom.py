@@ -18,8 +18,8 @@ class VoiceCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # if not discord.opus.is_loaded():
-    #     discord.opus.load_opus('libopus.so')
+    if not discord.opus.is_loaded():
+        discord.opus.load_opus('libopus.so')
 
 #Команда_connect
     @commands.command(pass_context=True)
