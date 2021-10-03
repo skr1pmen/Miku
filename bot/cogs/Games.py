@@ -100,6 +100,20 @@ class GamesForProgit(commands.Cog):
             responce = await self.bot.wait_for('button_click', check = lambda message: message.author == ctx.author)
             if responce.component.label == 'Начать игру!':
                 await ctx.send(embed = discord.Embed(description = "Для начала игры пропиши команду .casino и число от 0 до 999",color = 0x00d166))
+        elif number < 0:
+            emb = discord.Embed(color=0xa62019)
+            emb.add_field(name='❌ Ошибка!',value=f'Необходимо число от 0 до 999!')
+            Mes = await ctx.send(embed = emb)
+            await ctx.message.delete()
+            await asyncio.sleep(30)
+            await Mes.delete()
+        elif number > 999:
+            emb = discord.Embed(color=0xa62019)
+            emb.add_field(name='❌ Ошибка!',value=f'Необходимо число от 0 до 999!')
+            Mes = await ctx.send(embed = emb)
+            await ctx.message.delete()
+            await asyncio.sleep(30)
+            await Mes.delete()
         else:
             casinoResult = int(random.randint(0,999))
             cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
@@ -122,6 +136,7 @@ class GamesForProgit(commands.Cog):
                 await ctx.send(
                     f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nПоздравляю, ты выйграл! Ты сорвал Jeckpot в размере: {jeckpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
                 )
+                await ctx.message.delete()
             else:
                 cursor.execute(f"UPDATE users SET cash = cash - 10 WHERE id = {ctx.author.id}")
                 cursor.execute("UPDATE CashCasino SET cash = cash + 10 WHERE server_id = {0}".format(ctx.guild.id))
@@ -133,6 +148,7 @@ class GamesForProgit(commands.Cog):
                 await ctx.send(
                     f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nСожалею, но ты проиграл!\nСумма Jeckpot'a теперь составляет: {jeckpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
                 )
+                await ctx.message.delete()
 
 
 def setup(bot):
