@@ -79,7 +79,7 @@ class GamesForProgit(commands.Cog):
     @commands.command(aliases=['casino','рулетка','казино'])
     async def __casino(self,ctx,number:int=None):
         cursor.execute("SELECT cash FROM cashcasino WHERE server_id = {}".format(ctx.guild.id))
-        jeckpot = cursor.fetchone()[0]
+        Jackpot = cursor.fetchone()[0]
         cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
         balance = cursor.fetchone()[0]
         if number is None:
@@ -87,9 +87,9 @@ class GamesForProgit(commands.Cog):
                 title = "Мини-Игра: 🎰 Казино",
                 description = f"Коротко о правилах:\n\
                     •Начиная игру вы делаете фиксированную ставку в 10:leaves:\n\
-                    •Цель игрока отгадать число от 000 до 999, если игрок отдагал число, то он получает Jeckpot\n\
-                    •Jeckpot составляет всю сумму которую проиграли предыдущие игроки\n\
-                    Jeckpot на данный момент составляет: {jeckpot}:leaves:",
+                    •Цель игрока отгадать число от 000 до 999, если игрок отдагал число, то он получает Jackpot\n\
+                    •Jackpot составляет всю сумму которую проиграли предыдущие игроки\n\
+                    Jackpot на данный момент составляет: {Jackpot}:leaves:",
                 color = 0x00d166
             )
             await ctx.send(embed = emb,
@@ -126,27 +126,27 @@ class GamesForProgit(commands.Cog):
                 await asyncio.sleep(30)
                 await Mes.delete()
             if number == casinoResult:
-                cursor.execute(f"UPDATE users SET cash = cash + {jeckpot} WHERE id = {ctx.author.id}")
+                cursor.execute(f"UPDATE users SET cash = cash + {Jackpot} WHERE id = {ctx.author.id}")
                 cursor.execute("UPDATE cashcasino SET cash = cash - cahs WHERE server_id = {0}".format(ctx.guild.id))
                 cursor.execute("SELECT cash FROM cashcasino WHERE server_id = {}".format(ctx.guild.id))
-                jeckpot = cursor.fetchone()[0]
+                Jackpot = cursor.fetchone()[0]
                 cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
                 balance = cursor.fetchone()[0]
                 connection.commit()
                 await ctx.send(
-                    f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nПоздравляю, ты выйграл! Ты сорвал Jeckpot в размере: {jeckpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
+                    f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nПоздравляю, ты выйграл! Ты сорвал Jackpot в размере: {Jackpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
                 )
                 await ctx.message.delete()
             else:
                 cursor.execute(f"UPDATE users SET cash = cash - 10 WHERE id = {ctx.author.id}")
                 cursor.execute("UPDATE CashCasino SET cash = cash + 10 WHERE server_id = {0}".format(ctx.guild.id))
                 cursor.execute("SELECT cash FROM cashcasino WHERE server_id = {}".format(ctx.guild.id))
-                jeckpot = cursor.fetchone()[0]
+                Jackpot = cursor.fetchone()[0]
                 cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
                 balance = cursor.fetchone()[0]
                 connection.commit()
                 await ctx.send(
-                    f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nСожалею, но ты проиграл!\nСумма Jeckpot'a теперь составляет: {jeckpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
+                    f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nСожалею, но ты проиграл!\nСумма Jackpot'a теперь составляет: {Jackpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
                 )
                 await ctx.message.delete()
 
