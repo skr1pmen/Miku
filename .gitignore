@@ -4,3 +4,4 @@ start.bat
 .vscode
 __pycache__
 venv
+language.json

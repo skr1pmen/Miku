@@ -13,6 +13,7 @@ import requests
 from PIL import Image, ImageFont, ImageDraw, ImageChops
 import io
 from discord_components import DiscordComponents,Button,ButtonStyle
+# from googletrans import Translator
 
 RandChoslo = ["Random.org","рандомайзеру","серверу"]
 Color = [0x000080,0x00ced1,0x00ffff,0x006400,0x00ff7f,0x7fff00,0x00fa9a,0xffd700,0x8b4513,0xb22222,0xff0000,0xff1493,0xd02090,0x9400d3,0x8a2be2]
@@ -34,6 +35,7 @@ class UserCommands(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        # self.translator = Translator()
 #Соединение с БД
     global connection
     global cursor
@@ -503,6 +505,22 @@ class UserCommands(commands.Cog):
         link = json.loads(response.content)
     
         await ctx.send(f"https://discord.com/invite/{link['code']}")
+
+#Команда_translate
+    # @commands.command(aliases=['tr','перевод','translate'])
+    # async def trans (self, ctx, lang,*, args):
+    #     try:
+    #         translator = Translator()
+    #         o = translator.translate(f'{args}', dest = f'{lang}')
+    #     except Exception as e:
+    #         # обработка исключения
+    #         em = discord.Embed(title = 'Ошибка при переводе.')
+    #         em.add_field(name = 'Текст ошибки', value = str(e), inline = False)
+    #     else:
+    #         em = discord.Embed(title = 'Переводчик.')
+    #         em.add_field(name = 'Оригинал текста:', value = f'{args}', inline = False)
+    #         em.add_field(name = f'Перевод ({lang}):', value = f'{o.text}', inline = False)
+    #     await ctx.send(embed = em)
 
 
 def setup(bot):

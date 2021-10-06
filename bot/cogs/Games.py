@@ -96,8 +96,9 @@ class GamesForProgit(commands.Cog):
                 components = [
                     Button(style=ButtonStyle.green,label='Начать игру!')
                 ])
+            await ctx.message.delete()
             
-            responce = await self.bot.wait_for('button_click', check = lambda message: message.author == ctx.author)
+            responce = await self.bot.wait_for('button_click')
             if responce.component.label == 'Начать игру!':
                 await ctx.send(embed = discord.Embed(description = "Для начала игры пропиши команду .casino и число от 0 до 999",color = 0x00d166))
         elif number < 0:
@@ -107,6 +108,7 @@ class GamesForProgit(commands.Cog):
             await ctx.message.delete()
             await asyncio.sleep(30)
             await Mes.delete()
+            return False
         elif number > 999:
             emb = discord.Embed(color=0xa62019)
             emb.add_field(name='❌ Ошибка!',value=f'Необходимо число от 0 до 999!')
@@ -114,6 +116,7 @@ class GamesForProgit(commands.Cog):
             await ctx.message.delete()
             await asyncio.sleep(30)
             await Mes.delete()
+            return False
         else:
             casinoResult = int(random.randint(0,999))
             cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
@@ -125,6 +128,7 @@ class GamesForProgit(commands.Cog):
                 await ctx.message.delete()
                 await asyncio.sleep(30)
                 await Mes.delete()
+                return False
             if number == casinoResult:
                 cursor.execute(f"UPDATE users SET cash = cash + {Jackpot} WHERE id = {ctx.author.id}")
                 cursor.execute("UPDATE cashcasino SET cash = cash - cahs WHERE server_id = {0}".format(ctx.guild.id))
