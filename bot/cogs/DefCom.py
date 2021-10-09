@@ -64,7 +64,7 @@ class DefaultDiscordCommand(commands.Cog):
     async def on_member_join(self, member):
         role = member.guild.get_role(role_id=547109093907628046)
         await member.add_roles(role)
-        my_channel = self.bot.get_channel(892313788991307838)
+        my_channel = self.bot.get_channel(550082377637036035)
         emb = discord.Embed(color=0x00d166)
         emb.add_field(name='У нас пополнение!',value=f'Приветствуем {member.mention}.')
         await my_channel.send(embed = emb)
