@@ -60,5 +60,29 @@ class DefaultDiscordCommand(commands.Cog):
 
             await self.bot.process_commands(message)
 
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        role = member.guild.get_role(role_id=547109093907628046)
+        await member.add_roles(role)
+        my_channel = self.bot.get_channel(556533267839582222)
+        emb = discord.Embed(color=0x00d166)
+        emb.add_field(name='У нас пополнение!',value=f'Приветствуем {member.mention}.')
+        await my_channel.send(embed = emb)
+        
+        index1 = 0
+        lines = []
+        with open("bot/textFile/rules.txt", "r", encoding='UTF-8') as file:
+            for line in file.readlines():
+                line = line.strip()
+                lines.append(line)
+                index1 += 1
+        emb = discord.Embed()
+        emb.description = '\n'.join(lines)
+        emb.title = 'В общем давай я расскажу тебе правила сервера.'
+        emb.colour = 0x9932cc
+        emb.set_author(name="Привет я Мику! Я управляющая этим сервером SkripMen.")
+        emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+        await member.send(embed = emb)
+
 def setup(bot):
     bot.add_cog(DefaultDiscordCommand(bot))
