@@ -8,11 +8,21 @@ import random
 import json
 import string
 import asyncio
+import psycopg2
 
 class DefaultDiscordCommand(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    global connection
+    global cursor
+    connection = psycopg2.connect(
+        dbname='d7npuuht675g6t',
+        user='dfelpwutbrsdwj',
+        password='84d0cfdcf95f22787066edbc6cac37e900a64943ad8629d9ad30e325c6e797cc',
+        host='ec2-44-198-223-154.compute-1.amazonaws.com')
+    cursor = connection.cursor()
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -26,6 +36,8 @@ class DefaultDiscordCommand(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        amount = len(message.content) // 10
+        cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
 
         OffMat = ["Или мне кажется, или ты матекнулся {}?\nНадеюсь показалось, а то забаню!","Я конечно не профессионалка, но мне показалось что ты материшся {}","Не используй таких слов, хорошо {}?"]
 
@@ -59,7 +71,8 @@ class DefaultDiscordCommand(commands.Cog):
             await asyncio.sleep(5)
             await message.add_reaction('<:Twitch:886578298543550544>')
 
-            await self.bot.process_commands(message)
+        await self.bot.process_commands(message)
+        connection.commit()
 
     @commands.Cog.listener()
     async def on_member_join(self, member):

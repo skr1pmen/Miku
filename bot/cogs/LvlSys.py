@@ -68,12 +68,6 @@ class StastUsers(commands.Cog):
             connection.commit()
         else:
             pass
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        amount = len(message.content) // 5
-        cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
-        await self.bot.process_commands(message)
-        connection.commit()
 
 
     @commands.command(aliases = ['balance','cash','баланс'])
