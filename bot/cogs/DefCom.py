@@ -71,8 +71,8 @@ class DefaultDiscordCommand(commands.Cog):
             await asyncio.sleep(5)
             await message.add_reaction('<:Twitch:886578298543550544>')
 
-        await self.bot.process_commands(message)
-        connection.commit()
+            await self.bot.process_commands(message)
+            connection.commit()
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
