@@ -60,7 +60,7 @@ class GamesForProgit(commands.Cog):
         responce = await self.bot.wait_for('button_click', check = lambda message: message.author == ctx.author)
         if responce.component.id == 'one':
             if side_coin == 1:
-                await Mes.edit(content=f"Ты выбрал Орёл!\nВыпала Орёл!\nТы выйграл {coins*2}",components=[])
+                await Mes.edit(content=f"Ты выбрал Орёл!\nВыпала Орёл!\nТы выиграл {coins*2}",components=[])
                 # await responce.respond(content=f"Ты выбрал Орёл!\nВыпала Орёл!\nТы выйграл {coins*2}")
                 cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins,ctx.author.id))
             else:
@@ -68,7 +68,7 @@ class GamesForProgit(commands.Cog):
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(coins,ctx.author.id))
         elif responce.component.id == 'two':
             if side_coin == 1:
-                await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Решка!\nТы выйграл {coins*2}",components=[])
+                await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Решка!\nТы выиграл {coins*2}",components=[])
                 cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins,ctx.author.id))
             else:
                 await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Орёл!\nТы проиграл {coins}",components=[])

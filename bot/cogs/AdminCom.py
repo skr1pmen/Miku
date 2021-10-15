@@ -105,5 +105,14 @@ class AdministrationCommands(commands.Cog):
         await ctx.send(embed = emb)
         await ctx.message.delete()
 
+# #Команда_mes
+#     @commands.command(aliases=['mes', 'сообщение','message'])
+#     @commands.has_permissions(administrator=True)
+#     async def __mess(self, ctx, role: discord.Role, *, message):
+#         for member in ctx.message.guild.members:
+#             if role in member.roles:
+#                 await self.bot.send(member, message)
+
+
 def setup(bot):
     bot.add_cog(AdministrationCommands(bot))

@@ -1,4 +1,5 @@
 import discord
+from discord import guild
 from discord.ext import commands
 from discord.ext.commands.bot import Bot
 from discord_components.client import DiscordComponents

@@ -68,6 +68,13 @@ class StastUsers(commands.Cog):
             connection.commit()
         else:
             pass
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        amount = len(message.content) // 5
+        cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
+        await self.bot.process_commands(message)
+        connection.commit()
+
 
     @commands.command(aliases = ['balance','cash','баланс'])
     async def __balance(self,ctx,member:discord.Member = None):
@@ -170,12 +177,14 @@ class StastUsers(commands.Cog):
                     value = f"Стоимость роли: {row[1]} :leaves:",
                     inline = False
                 )
+        embed.set_footer(text="Для покупки роли необходимо вести команду .buy @role, где @role это название роли")
         await ctx.send(embed = embed)
         await ctx.message.delete()
     
 
     @commands.command(pass_context=True, aliases=['buy','купить'])
     async def __buy(self, ctx, role: discord.Role = None):
+        # rolelist = [547109093907628046,547398893579665421,547399773322346508]
         if role is None:
             await ctx.send(f"{ctx.authot.mention}, укажите роль, для покупки.")
             await ctx.message.delete()
@@ -190,6 +199,9 @@ class StastUsers(commands.Cog):
                 await ctx.send(f"{ctx.author.mention}, у тебя недостаточно средст для покупки данной роли")
                 await ctx.message.delete()
             else:
+                # if any(role.id in rolelist for role in ctx.message.author.roles):
+             #     await ctx.author.remove_roles(rolelist)
+                # await ctx.author.edit(roles = [])
                 await ctx.author.add_roles(role)
                 await ctx.message.delete()
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(resilts_one, ctx.author.id))
@@ -204,8 +216,8 @@ class StastUsers(commands.Cog):
         for row in resilt:
             counter += 1
             embed.add_field(
-                name = f'# {counter} | `{row[0]}`',
-                value = f'Баланс: {row[1]}',
+                name = f'# {counter} | ``{row[0]}``',
+                value = f'Баланс: {row[1]} :leaves:',
                 inline = False
             )
     
