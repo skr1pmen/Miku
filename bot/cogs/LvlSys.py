@@ -7,6 +7,9 @@ from discord.ext.commands.core import command
 import psycopg2
 from datetime import datetime
 import threading
+import random
+import json
+import string
 
 class StastUsers(commands.Cog):
 
@@ -71,6 +74,40 @@ class StastUsers(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self,message):
+        OffMat = ["Или мне кажется, или ты матекнулся {}?\nНадеюсь показалось, а то забаню!","Я конечно не профессионалка, но мне показалось что ты материшся {}","Не используй таких слов, хорошо {}?"]
+
+        if 'габе жив' in message.content.lower():
+            await message.channel.send("Габе Рип!!!")
+
+        if 'мику рип' in message.content.lower():
+            await message.channel.send("Сам Рип, так же как и Габе!!!")
+
+        if {i.lower().translate(str.maketrans('','',string.punctuation)) for i in message.content.split(' ')}.intersection(set(json.load(open('bot/textFile/cenz.json')))) != set():
+            Mes = await message.channel.send(random.choice(OffMat).format(message.author.mention))
+            await asyncio.sleep(30)
+            await Mes.delete()
+
+        if '@everyone' in message.content.lower():
+            await message.add_reaction('👍')
+            await message.add_reaction('👎')
+
+        if {i.lower().translate(str.maketrans('','',string.punctuation)) for i in message.content.split(' ')}\
+        .intersection(set(json.load(open('bot/textFile/vk.json')))) != set():
+            await asyncio.sleep(5)
+            await message.add_reaction('<:VK:886578224275025961>')
+
+        if {i.lower().translate(str.maketrans('','',string.punctuation)) for i in message.content.split(' ')}\
+        .intersection(set(json.load(open('bot/textFile/yt.json')))) != set():
+            await asyncio.sleep(5)
+            await message.add_reaction('<:YouTube:886325532302655578>')
+
+        if {i.lower().translate(str.maketrans('','',string.punctuation)) for i in message.content.split(' ')}\
+        .intersection(set(json.load(open('bot/textFile/twitch.json')))) != set():
+            await asyncio.sleep(5)
+            await message.add_reaction('<:Twitch:886578298543550544>')
+
+            await self.bot.process_commands(message)
+
         amount = len(message.content) // 10
         cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
         connection.commit()
