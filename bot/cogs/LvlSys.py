@@ -109,7 +109,10 @@ class StastUsers(commands.Cog):
             await self.bot.process_commands(message)
 
         amount = len(message.content) // 10
-        cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
+        if amount >= 30:
+            cursor.execute(f"UPDATE users SET cash = cash + 30 WHERE id = {message.author.id}")
+        else:
+            cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
         connection.commit()
 
 

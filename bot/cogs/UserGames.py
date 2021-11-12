@@ -11,7 +11,7 @@ class UserGameStatus(commands.Cog):
     @commands.Cog.listener()
     async def on_member_update(self, prev, cur):
         games = json.load(open('bot/textFile/GamesList.json'))
-        role = discord.utils.get(cur.guild.roles, name="ГЕЙмер")
+        role = discord.utils.get(cur.guild.roles, name="🎮Геймер")
         if cur.activity and cur.activity.name.lower() in games:
                 await cur.add_roles(role)
         # elif prev.activity and prev.activity.name.lower() in games and not cur.activity:
