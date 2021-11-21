@@ -263,6 +263,27 @@ class StastUsers(commands.Cog):
     
         await ctx.send(embed = embed)
 
+    @commands.command(aliases = ['convey','передать'])
+    async def __convey(self, ctx, member: discord.Member=None, amount:int=None):
+        if member is None:
+            await ctx.send(f"{ctx.author.mention}, укажи пользователя, которому хотите передать :leaves:.")
+            await ctx.message.delete()
+        else:
+            cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
+            resilts_one = cursor.fetchone()[0]
+            if amount is None:
+                await ctx.send(f"{ctx.author.mention}, ты не указал, сколько :leaves: передать.")
+                await ctx.message.delete()
+            elif amount < 0:
+                await ctx.send(f"{ctx.author.mention}, укажи число больше 0.")
+                await ctx.message.delete()
+            elif amount > resilts_one:
+                cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {member.id}")
+                cursor.execute(f"UPDATE users SET cash = cash - {amount} WHERE id = {ctx.author.id}")
+                connection.commit()
+                await ctx.send(embed=discord.Embed(description = "✅ Деньги успешно переведены!", color = 0x00d166))
+        
+
 def checkTime():
     threading.Timer(1, checkTime).start()
 

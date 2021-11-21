@@ -224,6 +224,7 @@ class UserCommands(commands.Cog):
             [
                 Button(style=ButtonStyle.green,label='coin'),
                 Button(style=ButtonStyle.green,label='casino'),
+                Button(style=ButtonStyle.green,label='convey'),
             ]
         ]
         buttons_adm = [
@@ -244,11 +245,12 @@ class UserCommands(commands.Cog):
             [
                 Button(style=ButtonStyle.green,label='coin'),
                 Button(style=ButtonStyle.green,label='casino'),
+                Button(style=ButtonStyle.green,label='convey'),
                 Button(style=ButtonStyle.green,label='ban'),
                 Button(style=ButtonStyle.green,label='banlist'),
-                Button(style=ButtonStyle.green,label='unban'),
             ],
             [
+                Button(style=ButtonStyle.green,label='unban'),
                 Button(style=ButtonStyle.green,label='kick'),
                 Button(style=ButtonStyle.green,label='mute')
             ]
@@ -325,6 +327,11 @@ class UserCommands(commands.Cog):
             elif responce.component.label == 'casino':
                 emb = discord.Embed(title= "",color = 0xffff00)
                 emb.add_field(name="casino/рулетка/казино",value="Мини-Игра \"🎰 Казино\" для зароботка баланса")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await ctx.send(embed = emb)
+            elif responce.component.label == 'convey':
+                emb = discord.Embed(title= "",color = 0xffff00)
+                emb.add_field(name="convey/передать",value="Команда для перевода денег между пользователями")
                 emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
                 await ctx.send(embed = emb)
             elif responce.component.label == 'ban':
