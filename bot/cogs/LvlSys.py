@@ -49,10 +49,11 @@ class StastUsers(commands.Cog):
             for member in guild.members:
                 cursor.execute(f"SELECT id FROM users WHERE id = {member.id}")
                 results = cursor.fetchone()
-                if results is None:
-                    cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{guild.id}')")
-                else:
-                    pass
+                if not member.bot:
+                    if results is None:
+                        cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{guild.id}')")
+                    else:
+                        pass
             cursor.execute(f"SELECT cash FROM CashCasino WHERE server_id = {guild.id}")
             serverCash = cursor.fetchone()
             if serverCash is None:
@@ -66,11 +67,12 @@ class StastUsers(commands.Cog):
     async def on_member_join(self, member):
         cursor.execute(f"SELECT id FROM users WHERE id = {member.id}")
         results = cursor.fetchone()
-        if results is None:
-            cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{member.guild.id}')")
-            connection.commit()
-        else:
-            pass
+        if not member.bot:
+            if results is None:
+                cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{member.guild.id}')")
+                connection.commit()
+            else:
+                pass
 
     @commands.Cog.listener()
     async def on_message(self,message):
@@ -109,13 +111,15 @@ class StastUsers(commands.Cog):
             await self.bot.process_commands(message)
 
         amount = len(message.content) // 10
-        if amount >= 30:
-            cursor.execute(f"UPDATE users SET cash = cash + 30 WHERE id = {message.author.id}")
-        else:
-            cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
-        connection.commit()
+        if message.content[0] != ".":
+            if not message.author.bot:
+                if amount >= 30:
+                    cursor.execute(f"UPDATE users SET cash = cash + 30 WHERE id = {message.author.id}")
+                else:
+                    cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
+                connection.commit()
 
-
+#Команда_balance
     @commands.command(aliases = ['balance','cash','баланс'])
     async def __balance(self,ctx,member:discord.Member = None):
         if member is None:
@@ -133,6 +137,7 @@ class StastUsers(commands.Cog):
             ))
             await ctx.message.delete()
 
+#Команда_give
     @commands.command(pass_context=True, aliases=['give', 'выдать'])
     @commands.has_permissions(administrator=True)
     async def __give(self, ctx, member: discord.Member=None, amount:int=None):
@@ -159,6 +164,7 @@ class StastUsers(commands.Cog):
         await asyncio.sleep(10)
         await Mes.delete()  
     
+#Команда_add-shop
     @commands.command(pass_context=True, aliases=['add-shop','добавить-роль'])
     @commands.has_permissions(administrator=True)
     async def __add_shop(self, ctx, role: discord.Role=None, cost: int = None):
@@ -186,6 +192,7 @@ class StastUsers(commands.Cog):
         await asyncio.sleep(10)
         await Mes.delete()
 
+#Команда_remove-shop
     @commands.command(pass_context=True, aliases=['remove-shop','удалить-роль'])
     @commands.has_permissions(administrator=True)
     async def __remove_shop(self, ctx, role: discord.Role=None):
@@ -206,6 +213,7 @@ class StastUsers(commands.Cog):
         await asyncio.sleep(10)
         await Mes.delete()
 
+#Команда_shop
     @commands.command(pass_context=True, aliases=['shop','магазин'])
     async def __shop(self, ctx):
         embed = discord.Embed(title="Магазин ролей",color=0x00d166)
@@ -221,7 +229,7 @@ class StastUsers(commands.Cog):
         await ctx.send(embed = embed)
         await ctx.message.delete()
     
-
+#Команда_buy
     @commands.command(pass_context=True, aliases=['buy','купить'])
     async def __buy(self, ctx, role: discord.Role = None):
         # rolelist = [547109093907628046,547398893579665421,547399773322346508]
@@ -247,6 +255,7 @@ class StastUsers(commands.Cog):
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(resilts_one, ctx.author.id))
                 await ctx.send(embed=discord.Embed(description = "✅ Покупка прошла успешно!", color = 0x00d166))
 
+#Команда_leaderboard
     @commands.command(aliases = ['leaderboard', 'лидерборд'])
     async def __leaderboard(self,ctx):
         embed = discord.Embed(title = 'Топ 10 сервера', color = 0x00d166)
@@ -263,25 +272,38 @@ class StastUsers(commands.Cog):
     
         await ctx.send(embed = embed)
 
+#Команда_convey
     @commands.command(aliases = ['convey','передать'])
     async def __convey(self, ctx, member: discord.Member=None, amount:int=None):
         if member is None:
-            await ctx.send(f"{ctx.author.mention}, укажи пользователя, которому хотите передать :leaves:.")
+            Mes = await ctx.send(f"{ctx.author.mention}, укажи пользователя, которому хотите передать :leaves:.")
             await ctx.message.delete()
+            await asyncio.sleep(10)
+            await Mes.delete()
         else:
             cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
             resilts_one = cursor.fetchone()[0]
             if amount is None:
-                await ctx.send(f"{ctx.author.mention}, ты не указал, сколько :leaves: передать.")
+                Mes = await ctx.send(f"{ctx.author.mention}, ты не указал, сколько :leaves: передать.")
                 await ctx.message.delete()
+                await asyncio.sleep(10)
+                await Mes.delete()
             elif amount < 0:
-                await ctx.send(f"{ctx.author.mention}, укажи число больше 0.")
+                Mes = await ctx.send(f"{ctx.author.mention}, укажи число больше 0.")
                 await ctx.message.delete()
-            elif amount > resilts_one:
+                await asyncio.sleep(10)
+                await Mes.delete()
+            elif resilts_one >= amount:
                 cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {member.id}")
                 cursor.execute(f"UPDATE users SET cash = cash - {amount} WHERE id = {ctx.author.id}")
                 connection.commit()
-                await ctx.message.add_reaction('✅')
+                await ctx.send(embed=discord.Embed(description = "✅ Перевод прошёл успешно!", color = 0x00d166))
+                await ctx.message.delete()
+            elif amount >= resilts_one:
+                Mes = await ctx.send(embed=discord.Embed(description = "❌ У тебя недостаточно денег!", color = 0xa62019))
+                await ctx.message.delete()
+                await asyncio.sleep(10)
+                await Mes.delete()
         
 
 def checkTime():

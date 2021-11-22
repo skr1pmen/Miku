@@ -381,13 +381,22 @@ class UserCommands(commands.Cog):
     @commands.command(pass_content=True, aliases=['статус', 'status'])
     async def __status(self, ctx, act = None, name = None, url = None):
         if act == None and name == None and url == None:
-            await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name=f"Версию {settings['version']}"))
-            emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
-            emb.add_field(name='Подробности:',value='Статус боты был изменён на дефолтный!')
-            await ctx.send(embed = emb)
-            await ctx.message.delete()
-            await asyncio.sleep(15)
-            await emb.delete()
+            if settings['debug'] == True:
+                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name=settings['versionDebug']))
+                emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
+                emb.add_field(name='Подробности:',value='Статус боты был изменён на дефолтный!')
+                await ctx.send(embed = emb)
+                await ctx.message.delete()
+                await asyncio.sleep(15)
+                await emb.delete()
+            else:
+                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name="Версию {}".format(settings['version'])))
+                emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
+                emb.add_field(name='Подробности:',value='Статус боты был изменён на дефолтный!')
+                await ctx.send(embed = emb)
+                await ctx.message.delete()
+                await asyncio.sleep(15)
+                await emb.delete()
         elif act == "game":
             if name != None:
                 await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name="{}".format(name)))
