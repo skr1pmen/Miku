@@ -86,7 +86,6 @@ class AdministrationCommands(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def __mute(self, ctx, user: discord.Member, time: int):
         role = user.guild.get_role(874610184692072478)
-        await ctx.send(f'{user} получил мут на {time}')
         emb = discord.Embed(title= "",color = 0x00ff00)
         emb.add_field(name="Помолчи ка:",value=f'{user} получил мут на {time} минут')
         await ctx.send(embed = emb)

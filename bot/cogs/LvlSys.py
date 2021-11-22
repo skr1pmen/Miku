@@ -280,6 +280,11 @@ class StastUsers(commands.Cog):
             await ctx.message.delete()
             await asyncio.sleep(10)
             await Mes.delete()
+        elif member is ctx.author:
+            Mes = await ctx.send(embed=discord.Embed(description = "❌ Ты не можешь перевести деньги самому себе!", color = 0xa62019))
+            await ctx.message.delete()
+            await asyncio.sleep(10)
+            await Mes.delete()
         else:
             cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
             resilts_one = cursor.fetchone()[0]
@@ -288,7 +293,7 @@ class StastUsers(commands.Cog):
                 await ctx.message.delete()
                 await asyncio.sleep(10)
                 await Mes.delete()
-            elif amount < 0:
+            elif amount <= 0:
                 Mes = await ctx.send(f"{ctx.author.mention}, укажи число больше 0.")
                 await ctx.message.delete()
                 await asyncio.sleep(10)
