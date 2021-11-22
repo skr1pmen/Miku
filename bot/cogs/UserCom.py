@@ -145,8 +145,8 @@ class UserCommands(commands.Cog):
         if member is None:
             member = ctx.author
         name,nick,id,status = str(member),member.display_name,str(member.id),str(member.status).upper()
-        created_at = member.created_at.strftime("%a %b\n%B %Y")
-        joined_at = member.joined_at.strftime("%a %b\n%B %Y")
+        created_at = member.created_at.strftime("%d.%m.%Y")
+        joined_at = member.joined_at.strftime("%d.%m.%Y")
         cursor.execute("SELECT cash FROM users WHERE id = {}".format(member.id))
         money = str(cursor.fetchone()[0])
         roles = str(len(member.roles)-1)
