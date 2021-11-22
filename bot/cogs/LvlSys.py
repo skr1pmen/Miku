@@ -281,7 +281,7 @@ class StastUsers(commands.Cog):
                 cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {member.id}")
                 cursor.execute(f"UPDATE users SET cash = cash - {amount} WHERE id = {ctx.author.id}")
                 connection.commit()
-                await ctx.send(embed=discord.Embed(description = "✅ Деньги успешно переведены!", color = 0x00d166))
+                await ctx.message.add_reaction('✅')
         
 
 def checkTime():
