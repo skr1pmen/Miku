@@ -2,6 +2,7 @@ run.bat
 cenz
 start.bat
 .vscode
+.idea
 __pycache__
 venv
 language.json

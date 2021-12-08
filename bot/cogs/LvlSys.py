@@ -1,15 +1,20 @@
 import asyncio
 import discord
+import math
 from discord import embeds
 from discord import channel
 from discord.ext import commands,tasks
 from discord.ext.commands.core import command
+from discord.message import Message
 import psycopg2
 from datetime import datetime
 import threading
 import random
 import json
 import string
+from discord.utils import get
+from dislash import *
+from config import settings
 
 class StastUsers(commands.Cog):
 
@@ -30,14 +35,17 @@ class StastUsers(commands.Cog):
         cursor.execute("""CREATE TABLE IF NOT EXISTS users(
             name TEXT,
             id BIGINT,
+            premium BOOLEAN,
             cash BIGINT,
+            spent BIGINT,
             server_id BIGINT
         )""")
 
         cursor.execute("""CREATE TABLE IF NOT EXISTS shop(
-            role_id INT,
-            id INT,
-            cost BIGINT            
+            role_id BIGINT,
+            id BIGINT,
+            cost BIGINT,
+            item_type TEXT           
         )""")
 
         cursor.execute("""CREATE TABLE IF NOT EXISTS CashCasino(
@@ -51,15 +59,13 @@ class StastUsers(commands.Cog):
                 results = cursor.fetchone()
                 if not member.bot:
                     if results is None:
-                        cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{guild.id}')")
-                    else:
-                        pass
+                        cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',false,0,0,'{guild.id}')")
+                    else: pass
             cursor.execute(f"SELECT cash FROM CashCasino WHERE server_id = {guild.id}")
             serverCash = cursor.fetchone()
             if serverCash is None:
                 cursor.execute(f"INSERT INTO CashCasino VALUES (0,'{guild.id}')")
-            else:
-                pass
+            else:pass
         connection.commit()
         print("База данный загружена!")
 
@@ -71,8 +77,7 @@ class StastUsers(commands.Cog):
             if results is None:
                 cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{member.guild.id}')")
                 connection.commit()
-            else:
-                pass
+            else:pass
 
     @commands.Cog.listener()
     async def on_message(self,message):
@@ -110,14 +115,26 @@ class StastUsers(commands.Cog):
 
             await self.bot.process_commands(message)
 
-        amount = len(message.content) // 10
-        if message.content[0] != ".":
-            if not message.author.bot:
-                if amount >= 30:
-                    cursor.execute(f"UPDATE users SET cash = cash + 30 WHERE id = {message.author.id}")
-                else:
-                    cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
-                connection.commit()
+        try:
+            amount = len(message.content) // 10
+            if message.content[0] != settings['prefix']:
+                if not message.author.bot:
+                    godRole = message.guild.get_role(547399773322346508)
+                    gamerRole = message.guild.get_role(888113637561090080)
+                    ourRole = message.guild.get_role(547398893579665421)
+                    if amount >=30:
+                        cursor.execute(f"UPDATE users SET cash = cash + 30 WHERE id = {message.author.id}")
+                    elif godRole in message.author.roles: #Для богов
+                        amount = round(amount*1.5)
+                        cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
+                    elif gamerRole in message.author.roles: #Для геймеров
+                        amount = round(amount*1.3)
+                        cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
+                    elif ourRole in message.author.roles: #Для наших людей
+                        amount = round(amount*1.2)
+                        cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
+                    connection.commit() 
+        except:pass
 
 #Команда_balance
     @commands.command(aliases = ['balance','cash','баланс'])
@@ -216,45 +233,60 @@ class StastUsers(commands.Cog):
 #Команда_shop
     @commands.command(pass_context=True, aliases=['shop','магазин'])
     async def __shop(self, ctx):
-        embed = discord.Embed(title="Магазин ролей",color=0x00d166)
-        cursor.execute("SELECT role_id, cost FROM shop WHERE id = %s", [ctx.guild.id])
+        embed = discord.Embed(title="Магазин",color=0x00d166)
+        cursor.execute("SELECT item_num, role_id, cost, item_type, description FROM shop WHERE server_id = {0}".format(ctx.guild.id))
+        buttons = []
         for row in cursor.fetchall():
-            if ctx.guild.get_role(row[0]) != None:
+            if row[3] == "role":
                 embed.add_field(
-                    name = f"Роль  ``{ctx.guild.get_role(row[0])}``",
-                    value = f"Стоимость роли: {row[1]} :leaves:",
-                    inline = False
+                    name = f"Товар: ``{ctx.guild.get_role(row[1])}``",
+                    value = f"Стоимость: {row[2]} :leaves:"
                 )
-        embed.set_footer(text="Для покупки роли необходимо вести команду .buy @role, где @role это название роли")
-        await ctx.send(embed = embed)
-        await ctx.message.delete()
-    
-#Команда_buy
-    @commands.command(pass_context=True, aliases=['buy','купить'])
-    async def __buy(self, ctx, role: discord.Role = None):
-        # rolelist = [547109093907628046,547398893579665421,547399773322346508]
-        if role is None:
-            await ctx.send(f"{ctx.authot.mention}, укажите роль, для покупки.")
-            await ctx.message.delete()
-        else:
-            cursor.execute("SELECT cost FROM shop WHERE role_id = {}".format(role.id))
-            resilts_one = cursor.fetchone()[0]
-            cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
-            resilts_two = cursor.fetchone()[0]
-            if role in ctx.author.roles:
-                await ctx.send(f"{ctx.author.mention}, у вас уже имеется данная роль")
-            elif resilts_one > resilts_two:
-                await ctx.send(f"{ctx.author.mention}, у тебя недостаточно средст для покупки данной роли")
-                await ctx.message.delete()
+                buttons.append(Button(style=ButtonStyle.green,custom_id = f"{row[0]}",label=f'{ctx.guild.get_role(row[1])}')),
             else:
-                # if any(role.id in rolelist for role in ctx.message.author.roles):
-             #     await ctx.author.remove_roles(rolelist)
-                # await ctx.author.edit(roles = [])
-                await ctx.author.add_roles(role)
-                await ctx.message.delete()
-                cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(resilts_one, ctx.author.id))
-                await ctx.send(embed=discord.Embed(description = "✅ Покупка прошла успешно!", color = 0x00d166))
+                embed.add_field(
+                    name = f"Товар: ``{row[4]}``",
+                    value = f"Стоимость: {row[2]} :leaves:"
+                )
+                buttons.append(Button(style=ButtonStyle.green,custom_id = f"{row[0]}",label=f'{row[4]}'))
+        await ctx.send(embed = embed,components=buttons)
+        await ctx.message.delete()
 
+        while True:
+            responce = await self.bot.wait_for('button_click')
+            responce = await ctx.wait_for_button_click(check=check)
+            num = responce.component.custom_id
+            cursor.execute("SELECT item_type FROM shop WHERE item_num = {0}".format(num))
+            itemType = cursor.fetchone()[0]
+            cursor.execute("SELECT cost FROM shop WHERE item_num = {0}".format(num))
+            cost = cursor.fetchone()[0]
+            cursor.execute("SELECT role_id FROM shop WHERE item_num = {0}".format(num))
+            role = ctx.guild.get_role(cursor.fetchone()[0])
+            author = responce.author
+            cursor.execute(f"SELECT premium FROM users WHERE id = {author.id}")
+            isPremium = cursor.fetchone()[0]
+            cursor.execute(f"SELECT cash FROM users WHERE id = {author.id}")
+            cash = cursor.fetchone()[0]
+
+            if cost <= cash:
+                if itemType == "sub":
+                    if isPremium == True:
+                        await responce.reply(f"{author.mention}, у вас уже имеется премиум подписка")
+                    if isPremium == False:
+                        cursor.execute(f"UPDATE users SET premium = true WHERE id = {author.id}")
+                        cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(cost, author.id))
+                        await responce.reply(embed=discord.Embed(description = "✅ Покупка прошла успешно!", color = 0x00d166))
+                elif itemType == "role":
+                    if role in author.roles:
+                        await responce.reply(f"{author.mention}, у вас уже имеется данная роль")
+                    else:
+                        await author.add_roles(role)
+                        cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(cost, author.id))
+                        if isPremium == True:
+                            cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(cost, author.id))
+                        await responce.reply(embed=discord.Embed(description = "✅ Покупка прошла успешно!", color = 0x00d166))
+            await responce.reply(f"{author.mention}, у тебя недостаточно средст для покупки данного товара")
+                
 #Команда_leaderboard
     @commands.command(aliases = ['leaderboard', 'лидерборд'])
     async def __leaderboard(self,ctx):
@@ -319,12 +351,15 @@ def checkTime():
     current_time = now.strftime("%H:%M:%S")
     currentDay = datetime.now().day
 
-    if(current_time == '04:00:00'):
+    if(current_time == '00:00:00'):
         print('Баллы били отправлены')
         cursor.execute(f"UPDATE users SET cash = cash + 10")
-    if currentDay == 1 and current_time == '04:00:00':
+    if currentDay == 1 and current_time == '00:00:00':
         print("Jeckpot был увеличен!")
         cursor.execute("UPDATE cashcasino SET cash = cash + cash")
+        print("Кешбек был возвращен")
+        cursor.execute(f'UPDATE users SET cash = cash + spent * 0.04')
+        cursor.execute(f'UPDATE users SET spent = 0')
     connection.commit()
         
 checkTime()

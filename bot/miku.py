@@ -5,9 +5,11 @@ from discord.ext import commands
 import os
 from config import settings
 from discord.utils import get
+from dislash import *
 
 
 bot = commands.Bot(command_prefix=settings['prefix'], intents = discord.Intents.all())
+inter_client = InteractionClient(bot)
 bot.remove_command('help')
 
 @bot.command(pass_context=True)

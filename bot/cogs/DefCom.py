@@ -1,5 +1,6 @@
 import discord
 from discord import guild
+from discord import channel
 from discord.ext import commands
 from discord.ext.commands.bot import Bot
 from discord_components.client import DiscordComponents
@@ -16,7 +17,6 @@ class DefaultDiscordCommand(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        DiscordComponents(self.bot)
         if settings['debug'] == True:
             print("Бот запущен в режиме Разработчика!")
             await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name=settings['versionDebug']))

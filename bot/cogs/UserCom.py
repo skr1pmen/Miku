@@ -91,10 +91,6 @@ class UserCommands(commands.Cog):
         await Mes.delete()
 
 #Команда_rand
-#   @slash.slash(name='rand',description='Мику даст рандомное число в диапозоне который ты скажешь.',options=[
-#     {'name':'one', "description": "Первое число", "type": 4, "requied": False},
-#     {'name':'two',"description": "Второе число", "type": 4, "requied": False}
-#     ],guild_ids = guild_ids)
     @commands.command(pass_context=True, aliases=['ранд', 'rand'])
     async def __rand(self, ctx, one, two):
         try:
@@ -144,35 +140,56 @@ class UserCommands(commands.Cog):
     async def __info(self, ctx,member: discord.Member = None):
         if member is None:
             member = ctx.author
-        name,nick,id,status = str(member),member.display_name,str(member.id),str(member.status).upper()
+        name,nick,id,status = str(member),member.display_name,str(member.id),str(member.status)
         created_at = member.created_at.strftime("%d.%m.%Y")
         joined_at = member.joined_at.strftime("%d.%m.%Y")
         cursor.execute("SELECT cash FROM users WHERE id = {}".format(member.id))
         money = str(cursor.fetchone()[0])
+        cursor.execute("SELECT premium FROM users WHERE id = {}".format(member.id))
+        prem = cursor.fetchone()[0]
         roles = str(len(member.roles)-1)
         base = Image.open('img/base.png').convert('RGBA')
         background = Image.open('img/bg.png').convert('RGBA')
         pfp = member.avatar_url_as(size = 256)
         data = io.BytesIO(await pfp.read())
         pfp = Image.open(data).convert('RGBA')
-        name = f"{name[:16]}..." if len(name)>16 else name
+        name = f"{name[:13]}..." if len(name)>16 else name
         nick = f"AKA:{nick[:17]}..." if len(nick)>17 else f"AKA:{nick}"
         draw = ImageDraw.Draw(base)
         pfp = circle(pfp,size=(215,215))
+        online = Image.open('img/online.png').convert('RGBA')
+        offline = Image.open('img/offline.png').convert('RGBA')
+        idle = Image.open('img/idle.png').convert('RGBA')
+        dnd = Image.open('img/dnd.png').convert('RGBA')
+        premImg = Image.open('img/prem.png').convert('RGBA')
 
         font = ImageFont.truetype('img/arial.ttf', size=38)
         AKAfont = ImageFont.truetype('img/arial.ttf', size=30)
         subfont = ImageFont.truetype('img/arial.ttf', size=25)
 
-        draw.text((280,240),name,font=font)
-        draw.text((270,315),nick,font=AKAfont)
-        draw.text((65,490),id,font=subfont)
-        draw.text((405,490),status,font=subfont)
+        if status == 'online':
+            pfp.paste(online,(140,140),online)
+        elif status == 'dnd':
+            pfp.paste(dnd,(140,140),dnd)
+        elif status == 'offline':
+            pfp.paste(offline,(140,140),offline)
+        elif status == 'idle':
+            pfp.paste(idle,(140,140),idle)
 
-        draw.text((65,632),created_at,font=subfont)
-        draw.text((405,632),joined_at,font=subfont)
-        draw.text((65,770),money,font=subfont)
-        draw.text((405,770),roles,font=subfont)
+        if prem == True:
+            background.paste(premImg,(270,175),premImg)
+
+        draw.text((280,240),name,font=font)
+        draw.text((275,320),nick,font=AKAfont)
+
+        draw.text((65,490),money,font=subfont)
+        draw.text((395,490),roles,font=subfont)
+
+        draw.text((65,618),created_at,font=subfont)
+        draw.text((395,618),joined_at,font=subfont)
+
+        draw.text((65,728),id,font=subfont)
+
         base.paste(pfp,(56,158),pfp)
 
         background.paste(base,(0,0),base)
@@ -183,7 +200,7 @@ class UserCommands(commands.Cog):
             await ctx.message.delete()
             await ctx.send(file = discord.File(a, "profile.png"))
 
-#Комада_rules
+#Команда_rules
     @commands.command(pass_context=True, aliases=['правила', 'rules'])
     async def __rules(self, ctx):
         index1 = 0

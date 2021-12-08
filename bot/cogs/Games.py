@@ -50,6 +50,8 @@ class GamesForProgit(commands.Cog):
             await asyncio.sleep(30)
             await Mes.delete()
             return False
+        cursor.execute(f"SELECT premium FROM users WHERE id = {ctx.author.id}")
+        isPremium = cursor.fetchone()[0]
         Mes = await ctx.send(
             f'Ты поставил {coins} :leaves:\nВыбери сторону монетки.',
             components = [
@@ -61,18 +63,25 @@ class GamesForProgit(commands.Cog):
         if responce.component.id == 'one':
             if side_coin == 1:
                 await Mes.edit(content=f"Ты выбрал Орёл!\nВыпала Орёл!\nТы выиграл {coins*2}",components=[])
-                # await responce.respond(content=f"Ты выбрал Орёл!\nВыпала Орёл!\nТы выйграл {coins*2}")
                 cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins,ctx.author.id))
+                if isPremium == True:
+                    cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(coins, ctx.author.id))
             else:
                 await Mes.edit(content=f"Ты выбрал Орёл!\nВыпала Решка!\nТы проиграл {coins}",components=[])
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(coins,ctx.author.id))
+                if isPremium == True:
+                    cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(coins, ctx.author.id))
         elif responce.component.id == 'two':
             if side_coin == 1:
                 await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Решка!\nТы выиграл {coins*2}",components=[])
                 cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins,ctx.author.id))
+                if isPremium == True:
+                    cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(coins, ctx.author.id))
             else:
                 await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Орёл!\nТы проиграл {coins}",components=[])
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(coins,ctx.author.id))
+                if isPremium == True:
+                    cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(coins, ctx.author.id))
         connection.commit()
 
 #Казино
@@ -121,6 +130,8 @@ class GamesForProgit(commands.Cog):
             casinoResult = int(random.randint(0,999))
             cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
             resilts = cursor.fetchone()[0]
+            cursor.execute(f"SELECT premium FROM users WHERE id = {ctx.author.id}")
+            isPremium = cursor.fetchone()[0]
             if 10 > resilts:
                 emb = discord.Embed(color=0xa62019)
                 emb.add_field(name='❌ Ошибка!',value=f'Недостаточно денег для ставки!')
@@ -136,6 +147,8 @@ class GamesForProgit(commands.Cog):
                 Jackpot = cursor.fetchone()[0]
                 cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
                 balance = cursor.fetchone()[0]
+                if isPremium == True:
+                    cursor.execute("UPDATE users SET spent = spent + 10 WHERE id = {0}".format(ctx.author.id))
                 connection.commit()
                 await ctx.send(
                     f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nПоздравляю, ты выйграл! Ты сорвал Jackpot в размере: {Jackpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
@@ -148,6 +161,8 @@ class GamesForProgit(commands.Cog):
                 Jackpot = cursor.fetchone()[0]
                 cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
                 balance = cursor.fetchone()[0]
+                if isPremium == True:
+                    cursor.execute("UPDATE users SET spent = spent + 10 WHERE id = {0}".format(ctx.author.id))
                 connection.commit()
                 await ctx.send(
                     f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nСожалею, но ты проиграл!\nСумма Jackpot'a теперь составляет: {Jackpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
