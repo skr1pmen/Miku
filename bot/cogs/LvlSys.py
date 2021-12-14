@@ -249,7 +249,7 @@ class StastUsers(commands.Cog):
                     value = f"Стоимость: {row[2]} :leaves:"
                 )
                 buttons.append(Button(style=ButtonStyle.green,custom_id = f"{row[0]}",label=f'{row[4]}'))
-        await ctx.send(embed = embed,components=buttons)
+        mes = await ctx.send(embed = embed,components=buttons)
         await ctx.message.delete()
 
         while True:
@@ -285,7 +285,10 @@ class StastUsers(commands.Cog):
                         if isPremium == True:
                             cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(cost, author.id))
                         await responce.reply(embed=discord.Embed(description = "✅ Покупка прошла успешно!", color = 0x00d166))
-            await responce.reply(f"{author.mention}, у тебя недостаточно средст для покупки данного товара")
+                await mes.delete()
+            else:
+                await responce.reply(f"{author.mention}, у тебя недостаточно средст для покупки данного товара")
+                await mes.delete()
                 
 #Команда_leaderboard
     @commands.command(aliases = ['leaderboard', 'лидерборд'])
