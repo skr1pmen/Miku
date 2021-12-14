@@ -3,6 +3,6 @@ settings={
     'version': '4.5.1',
     'prefix': '.',
     'guild_ids': '547094388539392000',
-    'debug': True,
+    'debug': False,
     'versionDebug': 'Тестирование обновления'
 }
