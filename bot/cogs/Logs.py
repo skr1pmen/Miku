@@ -10,21 +10,21 @@ class Logs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        msg = f"{member.name} присоединился к серверу."
+        msg = f"{member.mention} присоединился к серверу."
         await self.bot.wait_until_ready()
         channel = self.bot.get_channel(settings['logChannel'])
         await channel.send(msg)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        msg = f"{member.name} покинул сервер."
+        msg = f"{member.mention} покинул сервер."
         await self.bot.wait_until_ready()
         channel = self.bot.get_channel(settings['logChannel'])
         await channel.send(msg)
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
-        msg = discord.Embed(title=f"{before.author.name} изменил сообщение.")
+        msg = discord.Embed(title=f"{before.author.mention} изменил сообщение.")
         msg.add_field(name=f"Было:", value=f"``{before.content}``", inline = False)
         msg.add_field(name=f"Стало:", value=f"``{after.content}``", inline = False)
         await self.bot.wait_until_ready()
@@ -33,7 +33,7 @@ class Logs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
-        msg = discord.Embed(title=f"{message.author.name} удалил сообщение.", description=f"{message.content}")
+        msg = discord.Embed(title=f"Сообщение {message.author.mention} удалили.", description=f"{message.content}")
         await self.bot.wait_until_ready()
         channel = self.bot.get_channel(settings['logChannel'])
         await channel.send(embed = msg)
@@ -41,17 +41,17 @@ class Logs(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
         if before.channel is None:
-            msg = f"{member.display_name} присоединился к каналу {after.channel.mention}"
+            msg = f"{member.mention} присоединился к каналу {after.channel.mention}"
             await self.bot.wait_until_ready()
             channel = self.bot.get_channel(settings['logChannel'])
             await channel.send(msg)
         elif after.channel is None:
-            msg = f"{member.display_name} вышел из канала {before.channel.mention}"
+            msg = f"{member.mention} вышел из канала {before.channel.mention}"
             await self.bot.wait_until_ready()
             channel = self.bot.get_channel(settings['logChannel'])
             await channel.send(msg)
         elif before.channel != after.channel:
-            msg = f"{member.display_name} перешёл из канала {before.channel.mention} в канал {after.channel.mention}"
+            msg = f"{member.mention} перешёл из канала {before.channel.mention} в канал {after.channel.mention}"
             await self.bot.wait_until_ready()
             channel = self.bot.get_channel(settings['logChannel'])
             await channel.send(msg)
