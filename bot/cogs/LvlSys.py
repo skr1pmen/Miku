@@ -85,9 +85,11 @@ class StastUsers(commands.Cog):
 
         if 'габе жив' in message.content.lower():
             await message.channel.send("Габе Рип!!!")
+            await asyncio.sleep(60)
 
         if 'мику рип' in message.content.lower():
             await message.channel.send("Сам Рип, так же как и Габе!!!")
+            await asyncio.sleep(60)
 
         if {i.lower().translate(str.maketrans('','',string.punctuation)) for i in message.content.split(' ')}.intersection(set(json.load(open('bot/textFile/cenz.json')))) != set():
             Mes = await message.channel.send(random.choice(OffMat).format(message.author.mention))
