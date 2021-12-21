@@ -3,7 +3,7 @@ settings={
     'version': '4.6',
     'prefix': '.',
     'guild_ids': '547094388539392000',
-    'debug': True,
+    'debug': False,
     'versionDebug': 'Тестирование обновления',
     'logChannel': 921364597888413766
 }
