@@ -1,11 +1,57 @@
 import asyncio
 import discord
+from discord import message
 from discord.ext import commands
 from discord.ext.commands import context
 from discord.ext.commands.core import command
+from discord_components.dpy_overrides import send
 import psycopg2
 import random
 from discord_components import DiscordComponents,Button,ButtonStyle, component
+import json
+
+#Для_Городов
+# def parse_city_json(json_file='bot/textFile/russia.json'):
+def parse_city_json(json_file='bot/textFile/cities.json'):
+    p_obj = None
+    try:
+        js_obj = open(json_file, "r", encoding="utf-8")
+        p_obj = json.load(js_obj)
+    except Exception as err:
+        print(err)
+        return None
+    finally:
+        js_obj.close()   
+    return [city['city'].lower() for city in p_obj]
+def get_city(city):
+    normilize_city = city.strip().lower()
+    # if is_correct_city_name(normilize_city):
+    if get_city.previous_city != "" and normilize_city[0] != get_city.previous_city[-1]:
+        return 'Город должен начинаться на "{0}"!'.format(get_city.previous_city[-1])
+
+    if normilize_city not in cities_already_named:
+        cities_already_named.add(normilize_city)
+        last_latter_city = normilize_city[-1]
+        proposed_names = list(filter(lambda x: x[0] == last_latter_city, cities))
+        if proposed_names:
+            for city in proposed_names:
+                if city not in cities_already_named:
+                    cities_already_named.add(city)
+                    get_city.previous_city = city
+                    return city.capitalize()
+        return 'rip'
+    else:
+        return 'repeat'
+    # else:
+    #     return 'incorrect'
+get_city.previous_city = "" 
+# def is_correct_city_name(city):
+#     return city[-1].isalpha() and city[-1] not in ('ь', 'ъ')
+def refresh():
+    cities = parse_city_json()[:1000]
+    cities_already_named = set()
+cities = parse_city_json()[:1000]  # города которые знает бот
+cities_already_named = set()  # города, которые уже называли
 
 class GamesForProgit(commands.Cog):
 
@@ -169,6 +215,39 @@ class GamesForProgit(commands.Cog):
                 )
                 await ctx.message.delete()
 
+#Города
+    @commands.command(aliases=['города','city'])
+    async def __city(self,ctx):
+        coins = 0
+        await ctx.channel.purge(limit=1)
+        await ctx.send("Введи название города для начала игры. Если уже наигрался напиши ``.стоп``")
+        while True:
+            message_respose = await self.bot.wait_for('message', check=lambda m: m.author== ctx.author)
+            message = str(message_respose.content)
+            if ctx.author == self.bot.user:
+                return
+            if message_respose.content.lower() == "стоп":
+                await ctx.channel.purge(limit=coins*2+2)
+                await ctx.send(f"Игра закончена. Ты получил {coins*5} :leaves:")
+                cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins*5,ctx.author.id))
+                refresh()
+                return False
+            else:
+                response = get_city(message)
+                if response == "rip":
+                    await ctx.channel.purge(limit=coins*2+2)
+                    await ctx.send(f"Ты победил {ctx.author.mention}. Я не знаю города да данную букву. Ты выйграл {coins*5} :leaves:")
+                    cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins*5,ctx.author.id))
+                    refresh()
+                    return False
+                elif response == "repeat":
+                    await ctx.send("Город уже был. Повторите попытку.")
+                elif response == "incorrect":
+                    await ctx.send("Некорректное название города. Повторите попытку.")
+                else:
+                    await ctx.send(f"{response}")
+                    coins+=1
+            connection.commit()
 
 def setup(bot):
     bot.add_cog(GamesForProgit(bot))
