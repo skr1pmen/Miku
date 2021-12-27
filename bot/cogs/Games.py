@@ -48,6 +48,8 @@ get_city.previous_city = ""
 # def is_correct_city_name(city):
 #     return city[-1].isalpha() and city[-1] not in ('ь', 'ъ')
 def refresh():
+    # global cities
+    # global cities_already_named
     cities = parse_city_json()[:1000]
     cities_already_named = set()
 cities = parse_city_json()[:1000]  # города которые знает бот

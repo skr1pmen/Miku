@@ -135,6 +135,8 @@ class StastUsers(commands.Cog):
                     elif ourRole in message.author.roles: #Для наших людей
                         amount = round(amount*1.2)
                         cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
+                    else:
+                        cursor.execute(f"UPDATE users SET cash = cash + {amount} WHERE id = {message.author.id}")
                     connection.commit() 
         except:pass
 
