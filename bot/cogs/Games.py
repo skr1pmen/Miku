@@ -131,6 +131,9 @@ class GamesForProgit(commands.Cog):
                 if isPremium == True:
                     cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(coins, ctx.author.id))
         connection.commit()
+        await ctx.message.delete()
+        await asyncio.sleep(30)
+        await Mes.delete()
 
 #Казино
     @commands.command(aliases=['casino','рулетка','казино'])
@@ -149,7 +152,7 @@ class GamesForProgit(commands.Cog):
                     Jackpot на данный момент составляет: {Jackpot}:leaves:",
                 color = 0x00d166
             )
-            await ctx.send(embed = emb,
+            Mes = await ctx.send(embed = emb,
                 components = [
                     Button(style=ButtonStyle.green,label='Начать игру!')
                 ])
@@ -158,6 +161,9 @@ class GamesForProgit(commands.Cog):
             responce = await self.bot.wait_for('button_click')
             if responce.component.label == 'Начать игру!':
                 await ctx.send(embed = discord.Embed(description = "Для начала игры пропиши команду .casino и число от 0 до 999",color = 0x00d166))
+                await ctx.message.delete()
+                await asyncio.sleep(30)
+                await Mes.delete()
         elif number < 0:
             emb = discord.Embed(color=0xa62019)
             emb.add_field(name='❌ Ошибка!',value=f'Необходимо число от 0 до 999!')
@@ -198,10 +204,12 @@ class GamesForProgit(commands.Cog):
                 if isPremium == True:
                     cursor.execute("UPDATE users SET spent = spent + 10 WHERE id = {0}".format(ctx.author.id))
                 connection.commit()
-                await ctx.send(
+                Mes = await ctx.send(
                     f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nПоздравляю, ты выйграл! Ты сорвал Jackpot в размере: {Jackpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
                 )
                 await ctx.message.delete()
+                await asyncio.sleep(30)
+                await Mes.delete()
             else:
                 cursor.execute(f"UPDATE users SET cash = cash - 10 WHERE id = {ctx.author.id}")
                 cursor.execute("UPDATE CashCasino SET cash = cash + 10 WHERE server_id = {0}".format(ctx.guild.id))
@@ -212,10 +220,12 @@ class GamesForProgit(commands.Cog):
                 if isPremium == True:
                     cursor.execute("UPDATE users SET spent = spent + 10 WHERE id = {0}".format(ctx.author.id))
                 connection.commit()
-                await ctx.send(
+                Mes = await ctx.send(
                     f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nСожалею, но ты проиграл!\nСумма Jackpot'a теперь составляет: {Jackpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
                 )
                 await ctx.message.delete()
+                await asyncio.sleep(30)
+                await Mes.delete()
 
 #Города
     @commands.command(aliases=['города','city'])
