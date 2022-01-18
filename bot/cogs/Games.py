@@ -146,7 +146,7 @@ class GamesForProgit(commands.Cog):
             emb = discord.Embed(
                 title = "Мини-Игра: 🎰 Казино",
                 description = f"Коротко о правилах:\n\
-                    •Начиная игру вы делаете фиксированную ставку в 10:leaves:\n\
+                    •Начиная игру вы делаете фиксированную ставку в 100:leaves:\n\
                     •Цель игрока отгадать число от 000 до 999, если игрок отдагал число, то он получает Jackpot\n\
                     •Jackpot составляет всю сумму которую проиграли предыдущие игроки\n\
                     Jackpot на данный момент составляет: {Jackpot}:leaves:",
@@ -186,7 +186,7 @@ class GamesForProgit(commands.Cog):
             resilts = cursor.fetchone()[0]
             cursor.execute(f"SELECT premium FROM users WHERE id = {ctx.author.id}")
             isPremium = cursor.fetchone()[0]
-            if 10 > resilts:
+            if 100 > resilts:
                 emb = discord.Embed(color=0xa62019)
                 emb.add_field(name='❌ Ошибка!',value=f'Недостаточно денег для ставки!')
                 Mes = await ctx.send(embed = emb)
@@ -202,7 +202,7 @@ class GamesForProgit(commands.Cog):
                 cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
                 balance = cursor.fetchone()[0]
                 if isPremium == True:
-                    cursor.execute("UPDATE users SET spent = spent + 10 WHERE id = {0}".format(ctx.author.id))
+                    cursor.execute("UPDATE users SET spent = spent + 100 WHERE id = {0}".format(ctx.author.id))
                 connection.commit()
                 Mes = await ctx.send(
                     f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nПоздравляю, ты выйграл! Ты сорвал Jackpot в размере: {Jackpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
@@ -211,14 +211,14 @@ class GamesForProgit(commands.Cog):
                 await asyncio.sleep(30)
                 await Mes.delete()
             else:
-                cursor.execute(f"UPDATE users SET cash = cash - 10 WHERE id = {ctx.author.id}")
-                cursor.execute("UPDATE CashCasino SET cash = cash + 10 WHERE server_id = {0}".format(ctx.guild.id))
+                cursor.execute(f"UPDATE users SET cash = cash - 100 WHERE id = {ctx.author.id}")
+                cursor.execute("UPDATE CashCasino SET cash = cash + 100 WHERE server_id = {0}".format(ctx.guild.id))
                 cursor.execute("SELECT cash FROM cashcasino WHERE server_id = {}".format(ctx.guild.id))
                 Jackpot = cursor.fetchone()[0]
                 cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
                 balance = cursor.fetchone()[0]
                 if isPremium == True:
-                    cursor.execute("UPDATE users SET spent = spent + 10 WHERE id = {0}".format(ctx.author.id))
+                    cursor.execute("UPDATE users SET spent = spent + 100 WHERE id = {0}".format(ctx.author.id))
                 connection.commit()
                 Mes = await ctx.send(
                     f"Играет {ctx.author.mention}\nТвоё число: {number}\nЧисло которое выпало: {casinoResult}\nСожалею, но ты проиграл!\nСумма Jackpot'a теперь составляет: {Jackpot}:leaves:\nТвой баланс составляет: {balance}:leaves:"
