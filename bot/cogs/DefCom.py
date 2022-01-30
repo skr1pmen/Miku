@@ -33,11 +33,11 @@ class DefaultDiscordCommand(commands.Cog):
         emb.add_field(name='У нас пополнение!',value=f'Приветствуем {member.mention}.')
         await my_channel.send(embed = emb)
         
-        emb.description = f"Настоятельно рекомендую посетить сайт сервера для ознакомления.\nhttps://ssquadinfo.tk/"
-        emb.colour = 0x9932cc
-        emb.set_author(name="Привет я Мику! Я управляющая этим сервером SSquad.")
-        emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
-        await member.send(embed = emb)
+        embed = discord.Embed(color=0x9932cc)
+        embed.description = f"Настоятельно рекомендую посетить сайт сервера для ознакомления.\nhttps://ssquadinfo.tk/"
+        embed.set_author(name="Привет я Мику! Я управляющая этим сервером SSquad.")
+        embed.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+        await member.send(embed = embed)
 
 def setup(bot):
     bot.add_cog(DefaultDiscordCommand(bot))
