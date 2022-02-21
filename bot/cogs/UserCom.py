@@ -60,7 +60,7 @@ class UserCommands(commands.Cog):
                 await Mes.delete()
             elif limit >= 100:
                 emb = discord.Embed(color=0xa62019)
-                emb.add_field(name='❌ Ошибка команды ``.clear``!',value=f'Ты превысил лимит количевства удаляемых сообщений.')
+                emb.add_field(name='❌ Ошибка команды ``.clear``!',value=f'Ты превысил лимит количества удаляемых сообщений.')
                 Mes = await ctx.send(embed = emb)
                 await ctx.message.delete()
                 await asyncio.sleep(30)
@@ -99,7 +99,7 @@ class UserCommands(commands.Cog):
             arg = random.randint(one,two)
         except ValueError:
             emb = discord.Embed(title= "",color = 0xff0000)
-            emb.add_field(name="Ошибка команды ``.rand``:",value="Введены неправильные зачения, повтори попытку.")
+            emb.add_field(name="Ошибка команды ``.rand``:",value="Введены неправильные значения, повтори попытку.")
             Mes = await ctx.send(embed = emb)
             await ctx.message.delete()
             await asyncio.sleep(10)
@@ -214,7 +214,7 @@ class UserCommands(commands.Cog):
         emb.description = '\n'.join(lines)
         emb.title = 'В общем давай я расскажу тебе правила сервера.'
         emb.colour = 0x9932cc
-        emb.set_author(name="Привет я Мику! Я управляющая этим сервером.\nНе считая Skrip_men и его команды Aдминов конечно.")
+        emb.set_author(name="Привет я Мику! Я управляющая этим сервером.\nНе считая skr1pmen и его команды Админов конечно.")
         emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
         await ctx.send('{}, я выслала правила тебе в личку'.format(ctx.author.mention))
         await ctx.author.send(embed = emb)
@@ -299,7 +299,7 @@ class UserCommands(commands.Cog):
                 await Mes.delete()
             elif responce.component.label == 'info':
                 emb = discord.Embed(title= "",color = 0xffff00)
-                emb.add_field(name="info/инфо",value="Муки выыедет карточку с информацией о любом пользователе")
+                emb.add_field(name="info/инфо",value="Муки выведет карточку с информацией о любом пользователе")
                 emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
                 Mes = await ctx.send(embed = emb)
                 await asyncio.sleep(60)
@@ -341,7 +341,7 @@ class UserCommands(commands.Cog):
                 await Mes.delete()
             elif responce.component.label == 'balance':
                 emb = discord.Embed(title= "",color = 0xffff00)
-                emb.add_field(name="balance/баланс",value="Команда выведет балас любого пользователя на сервере")
+                emb.add_field(name="balance/баланс",value="Команда выведет баланс любого пользователя на сервере")
                 emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
                 Mes = await ctx.send(embed = emb)
                 await asyncio.sleep(60)
@@ -362,14 +362,14 @@ class UserCommands(commands.Cog):
                 await Mes.delete()
             elif responce.component.label == 'coin':
                 emb = discord.Embed(title= "",color = 0xffff00)
-                emb.add_field(name="coin/монетка",value="Мини-Игра \"Монетка\" для зароботка баланса")
+                emb.add_field(name="coin/монетка",value="Мини-Игра \"Монетка\" для заработка баланса")
                 emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
                 Mes = await ctx.send(embed = emb)
                 await asyncio.sleep(60)
                 await Mes.delete()
             elif responce.component.label == 'casino':
                 emb = discord.Embed(title= "",color = 0xffff00)
-                emb.add_field(name="casino/рулетка/казино",value="Мини-Игра \"🎰 Казино\" для зароботка баланса")
+                emb.add_field(name="casino/рулетка/казино",value="Мини-Игра \"🎰 Казино\" для заработка баланса")
                 emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
                 Mes = await ctx.send(embed = emb)
                 await asyncio.sleep(60)
@@ -390,7 +390,7 @@ class UserCommands(commands.Cog):
                 await Mes.delete()
             elif responce.component.label == 'banlist':
                 emb = discord.Embed(title= "",color = 0xffff00)
-                emb.add_field(name="banlist/банлист",value="Выдаст список забаненых людей в лс")
+                emb.add_field(name="banlist/банлист",value="Выдаст список забаненных людей в лс")
                 emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
                 Mes = await ctx.send(embed = emb)
                 await asyncio.sleep(60)
@@ -423,11 +423,11 @@ class UserCommands(commands.Cog):
         emb= discord.Embed(title="",color = 0x00bfff)
         emb.set_author(name= "Мику Хацунэ\nHatsune Miku", url="https://ru.wikipedia.org/wiki/%D0%9C%D0%B8%D0%BA%D1%83_%D0%A5%D0%B0%D1%86%D1%83%D0%BD%D1%8D")
         emb.add_field(name="1.Кто ты ?",value="Я японская виртуальная певица, созданная компанией Crypton Future Media 31 августа 2007 года.\nШутка, на самом деле я Бот созданный для управления сервером Skrip_men")
-        emb.add_field(name="2.Зачем ты нужна ?",value="Как я уже сказала, я нужна для помощи в управлении сервером Skrip_men")
-        emb.add_field(name="3.Когда создана ?",value="Моей официальной датой создания является 8 марта 2019\n(вот я вас мужиков трести в 2 раза больше буду в марте)...Хехе...мда неловко получиловь")
-        emb.add_field(name="4.Кто тебя написал и на каком языке ?",value="Я была написана Skrip_men'ом, на языке Python")
+        emb.add_field(name="2.Зачем ты нужна ?",value="Как я уже сказала, я нужна для помощи в управлении сервером skr1pmen")
+        emb.add_field(name="3.Когда создана ?",value="Моей официальной датой создания является 8 марта 2019\n(вот я вас мужиков трести в 2 раза больше буду в марте)...Хехе...мда неловко получилось")
+        emb.add_field(name="4.Кто тебя написал и на каком языке ?",value="Я была написана skr1pmen'ом, на языке Python")
         emb.add_field(name="__Версия бота:__",value=f"{settings['version']}")
-        emb.add_field(name="__Помошь в создании:__",value="alex_jonas,Southpaw,STRAYKERRR")
+        emb.add_field(name="__Помощь в создании:__",value="alex_jonas,Southpaw,STRAYKERRR")
 
         emb.set_thumbnail(url= "https://raw.githubusercontent.com/SkripMen/mikubotskripmen/master/%D0%90%D0%92%D0%90%D0%A2%D0%90%D0%A0%D0%9C%D0%98%D0%9A%D0%A3.png")
         emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
@@ -465,7 +465,7 @@ class UserCommands(commands.Cog):
                 await emb.delete()
             else:
                 emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
-                emb.add_field(name='Ошибка:',value='Вы не указала навание игры!')
+                emb.add_field(name='Ошибка:',value='Вы не указала название игры!')
                 await ctx.send(embed = emb)
                 await ctx.message.delete()
                 await asyncio.sleep(15)

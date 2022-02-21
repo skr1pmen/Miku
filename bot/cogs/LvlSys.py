@@ -81,7 +81,7 @@ class StastUsers(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self,message):
-        OffMat = ["Или мне кажется, или ты матекнулся {}?\nНадеюсь показалось, а то забаню!","Я конечно не профессионалка, но мне показалось что ты материшся {}","Не используй таких слов, хорошо {}?"]
+        OffMat = ["Или мне кажется, или ты матюкнулся {}?\nНадеюсь показалось, а то забаню!","Я конечно не профессионалка, но мне показалось что ты материшься {}","Не используй таких слов, хорошо {}?"]
 
         # if 'габе жив' in message.content.lower():
         #     await message.channel.send("Габе Рип!!!")
@@ -186,53 +186,53 @@ class StastUsers(commands.Cog):
         await Mes.delete()  
     
 #Команда_add-shop
-    @commands.command(pass_context=True, aliases=['add-shop','добавить-роль'])
-    @commands.has_permissions(administrator=True)
-    async def __add_shop(self, ctx, role: discord.Role=None, cost: int = None):
-        if role is None:
-            await ctx.send(f"{ctx.authot.mention}, укажите роль, для добавления в магазин.")
-            await ctx.message.delete()
-        else:
-            if cost is None:
-                await ctx.send(f"{ctx.author.mention}, укажите стоимость роли.")
-                await ctx.message.delete()
-            elif cost < 0:
-                await ctx.send(f"{ctx.author.mention}, вы задали отрицательное число стоимости. Давай по новой.")
-                await ctx.message.delete()
-            else:
-                cursor.execute(f"INSERT INTO shop VALUES ({role.id},{ctx.guild.id},{cost})")
-                connection.commit()
-                await ctx.message.delete()
-                await ctx.send(embed=discord.Embed(description = "Роль добавлена в магазин!"))
-    @__add_shop.error
-    async def __add_shop_error(self, ctx, error):
-        emb = discord.Embed(color=0xa62019)
-        emb.add_field(name='❌ Ошибка команды ``.add_shop``!',value=f'У вас недостаточно прав!')
-        Mes = await ctx.send(embed = emb)
-        await ctx.message.delete()
-        await asyncio.sleep(10)
-        await Mes.delete()
+    # @commands.command(pass_context=True, aliases=['add-shop','добавить-роль'])
+    # @commands.has_permissions(administrator=True)
+    # async def __add_shop(self, ctx, role: discord.Role=None, cost: int = None):
+    #     if role is None:
+    #         await ctx.send(f"{ctx.authot.mention}, укажите роль, для добавления в магазин.")
+    #         await ctx.message.delete()
+    #     else:
+    #         if cost is None:
+    #             await ctx.send(f"{ctx.author.mention}, укажите стоимость роли.")
+    #             await ctx.message.delete()
+    #         elif cost < 0:
+    #             await ctx.send(f"{ctx.author.mention}, вы задали отрицательное число стоимости. Давай по новой.")
+    #             await ctx.message.delete()
+    #         else:
+    #             cursor.execute(f"INSERT INTO shop VALUES ({role.id},{ctx.guild.id},{cost})")
+    #             connection.commit()
+    #             await ctx.message.delete()
+    #             await ctx.send(embed=discord.Embed(description = "Роль добавлена в магазин!"))
+    # @__add_shop.error
+    # async def __add_shop_error(self, ctx, error):
+    #     emb = discord.Embed(color=0xa62019)
+    #     emb.add_field(name='❌ Ошибка команды ``.add_shop``!',value=f'У вас недостаточно прав!')
+    #     Mes = await ctx.send(embed = emb)
+    #     await ctx.message.delete()
+    #     await asyncio.sleep(10)
+    #     await Mes.delete()
 
 #Команда_remove-shop
-    @commands.command(pass_context=True, aliases=['remove-shop','удалить-роль'])
-    @commands.has_permissions(administrator=True)
-    async def __remove_shop(self, ctx, role: discord.Role=None):
-        if role is None:
-            await ctx.send(f"{ctx.authot.mention}, укажите роль, для удаления из магазина.")
-            await ctx.message.delete()
-        else:
-            cursor.execute("DELETE FROM shop WHERE role_id = {}".format(role.id))
-            connection.commit()
-            await ctx.message.delete()
-            await ctx.send(embed=discord.Embed(description = "Роль удалена из магазина!"))
-    @__remove_shop.error
-    async def __remove_shop_error(self, ctx, error):
-        emb = discord.Embed(color=0xa62019)
-        emb.add_field(name='❌ Ошибка команды ``.remove_shop``!',value=f'У вас недостаточно прав!')
-        Mes = await ctx.send(embed = emb)
-        await ctx.message.delete()
-        await asyncio.sleep(10)
-        await Mes.delete()
+    # @commands.command(pass_context=True, aliases=['remove-shop','удалить-роль'])
+    # @commands.has_permissions(administrator=True)
+    # async def __remove_shop(self, ctx, role: discord.Role=None):
+    #     if role is None:
+    #         await ctx.send(f"{ctx.authot.mention}, укажите роль, для удаления из магазина.")
+    #         await ctx.message.delete()
+    #     else:
+    #         cursor.execute("DELETE FROM shop WHERE role_id = {}".format(role.id))
+    #         connection.commit()
+    #         await ctx.message.delete()
+    #         await ctx.send(embed=discord.Embed(description = "Роль удалена из магазина!"))
+    # @__remove_shop.error
+    # async def __remove_shop_error(self, ctx, error):
+    #     emb = discord.Embed(color=0xa62019)
+    #     emb.add_field(name='❌ Ошибка команды ``.remove_shop``!',value=f'У вас недостаточно прав!')
+    #     Mes = await ctx.send(embed = emb)
+    #     await ctx.message.delete()
+    #     await asyncio.sleep(10)
+    #     await Mes.delete()
 
 #Команда_shop
     @commands.command(pass_context=True, aliases=['shop','магазин'])
@@ -362,7 +362,7 @@ def checkTime():
         print('Баллы били отправлены')
         cursor.execute(f"UPDATE users SET cash = cash + 10")
     if currentDay == 1 and current_time == '00:00:00':
-        print("Jeckpot был увеличен!")
+        print("Jackpot был увеличен!")
         cursor.execute("UPDATE cashcasino SET cash = cash + cash")
         print("Кешбек был возвращен")
         cursor.execute(f'UPDATE users SET cash = cash + spent * 0.04')
