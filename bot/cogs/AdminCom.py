@@ -9,9 +9,9 @@ class AdministrationCommands(commands.Cog):
 
 #Команда_ban
     @commands.command(pass_context=True, aliases=['бан', 'ban'])
-    @commands.has_permissions(administrator=True)
-    async def __ban(ctx, user: discord.Member):
-        await user.ban()
+    @commands.has_permissions(ban_members=True)
+    async def __ban(self, ctx, user: discord.Member, *, reason=None):
+        await user.ban(reason=reason)
         emb = discord.Embed(title= "",color = 0x00ff00)
         emb.add_field(name="Вам бан!",value="{} был успешно забанен".format(user.name))
         emb.set_thumbnail(url= "https://i.gifer.com/fzm0.gif")
@@ -19,7 +19,7 @@ class AdministrationCommands(commands.Cog):
         await ctx.message.delete()
 
     @__ban.error
-    async def __ban_error(ctx, error):
+    async def __ban_error(self, ctx, error):
         emb = discord.Embed(title= "",color = 0xff0000)
         emb.add_field(name="Ошибка команды ``.ban``:",value="У вас недостаточно прав или такого пользователя нет")
         await ctx.send(embed = emb)
@@ -37,7 +37,7 @@ class AdministrationCommands(commands.Cog):
         await ctx.message.delete()
 
     @__unban.error
-    async def __unban_error(ctx, error):
+    async def __unban_error(self, ctx, error):
         emb = discord.Embed(title= "",color = 0xff0000)
         emb.add_field(name="Ошибка команды ``.unban``:",value="У вас недостаточно прав или такого пользователя нет")
         await ctx.send(embed = emb)
@@ -56,7 +56,7 @@ class AdministrationCommands(commands.Cog):
         await ctx.message.delete()
 
     @__banlist.error
-    async def __banlist_error(ctx, error):
+    async def __banlist_error(self, ctx, error):
         emb = discord.Embed(title= "",color = 0xff0000)
         emb.add_field(name="Ошибка команды ``.banlist``:",value="У вас недостаточно прав")
         await ctx.send(embed = emb)
@@ -75,7 +75,7 @@ class AdministrationCommands(commands.Cog):
         await ctx.send(embed = emb)
 
     @__kick.error
-    async def __kick_error(ctx, error):
+    async def __kick_error(self, ctx, error):
         emb = discord.Embed(title= "",color = 0xff0000)
         emb.add_field(name="Ошибка команды ``.kick``:",value="У вас недостаточно прав или такого пользователя нет")
         await ctx.send(embed = emb)
@@ -98,7 +98,7 @@ class AdministrationCommands(commands.Cog):
         await ctx.send(embed = emb)
 
     @__mute.error
-    async def __mute_error(ctx, error):
+    async def __mute_error(self, ctx, error):
         emb = discord.Embed(title= "",color = 0xff0000)
         emb.add_field(name="Ошибка команды ``.mute``:",value="У вас недостаточно прав или такого пользователя нет")
         await ctx.send(embed = emb)

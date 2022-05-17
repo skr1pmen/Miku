@@ -1,6 +1,6 @@
 settings={
     'token': 'NTUzNTM4ODczODI1Njg5NjAw.XIJRPw.Rzeq0khZBCoXGdPAa9Wufv1PV30',
-    'version': '4.6.5',
+    'version': '4.6.6',
     'prefix': '.',
     'guild_ids': '547094388539392000',
     'debug': False,
