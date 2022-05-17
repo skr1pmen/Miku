@@ -22,23 +22,23 @@ class Logs(commands.Cog):
         channel = self.bot.get_channel(settings['logChannel'])
         await channel.send(msg)
 
-    @commands.Cog.listener()
-    async def on_message_edit(self, before, after):
-        if not before.author.bot:
-            msg = discord.Embed(title=f"{before.author.name} изменил сообщение.")
-            msg.add_field(name=f"Было:", value=f"``{before.content}``", inline = False)
-            msg.add_field(name=f"Стало:", value=f"``{after.content}``", inline = False)
-            await self.bot.wait_until_ready()
-            channel = self.bot.get_channel(settings['logChannel'])
-            await channel.send(embed = msg)
+    # @commands.Cog.listener()
+    # async def on_message_edit(self, before, after):
+    #     if not before.author.bot:
+    #         msg = discord.Embed(title=f"{before.author.name} изменил сообщение.")
+    #         msg.add_field(name=f"Было:", value=f"``{before.content}``", inline = False)
+    #         msg.add_field(name=f"Стало:", value=f"``{after.content}``", inline = False)
+    #         await self.bot.wait_until_ready()
+    #         channel = self.bot.get_channel(settings['logChannel'])
+    #         await channel.send(embed = msg)
 
-    @commands.Cog.listener()
-    async def on_message_delete(self, message):
-        if not message.author.bot:
-            msg = discord.Embed(title=f"Сообщение {message.author.name} удалили.", description=f"{message.content}")
-            await self.bot.wait_until_ready()
-            channel = self.bot.get_channel(settings['logChannel'])
-            await channel.send(embed = msg)
+    # @commands.Cog.listener()
+    # async def on_message_delete(self, message):
+    #     if not message.author.bot:
+    #         msg = discord.Embed(title=f"Сообщение {message.author.name} удалили.", description=f"{message.content}")
+    #         await self.bot.wait_until_ready()
+    #         channel = self.bot.get_channel(settings['logChannel'])
+    #         await channel.send(embed = msg)
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):

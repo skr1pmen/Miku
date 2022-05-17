@@ -422,7 +422,7 @@ class UserCommands(commands.Cog):
     async def __about(self, ctx):
         emb= discord.Embed(title="",color = 0x00bfff)
         emb.set_author(name= "Мику Хацунэ\nHatsune Miku", url="https://ru.wikipedia.org/wiki/%D0%9C%D0%B8%D0%BA%D1%83_%D0%A5%D0%B0%D1%86%D1%83%D0%BD%D1%8D")
-        emb.add_field(name="1.Кто ты ?",value="Я японская виртуальная певица, созданная компанией Crypton Future Media 31 августа 2007 года.\nШутка, на самом деле я Бот созданный для управления сервером Skrip_men")
+        emb.add_field(name="1.Кто ты ?",value="Я японская виртуальная певица, созданная компанией Crypton Future Media 31 августа 2007 года.\nШутка, на самом деле я Бот созданный для управления сервером SSquad")
         emb.add_field(name="2.Зачем ты нужна ?",value="Как я уже сказала, я нужна для помощи в управлении сервером skr1pmen")
         emb.add_field(name="3.Когда создана ?",value="Моей официальной датой создания является 8 марта 2019\n(вот я вас мужиков трести в 2 раза больше буду в марте)...Хехе...мда неловко получилось")
         emb.add_field(name="4.Кто тебя написал и на каком языке ?",value="Я была написана skr1pmen'ом, на языке Python")
@@ -440,75 +440,83 @@ class UserCommands(commands.Cog):
         if act == None and name == None and url == None:
             if settings['debug'] == True:
                 await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name=settings['versionDebug']))
-                emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
+                emb = discord.Embed(title = 'Статус Мику', color = 0x00ff00)
                 emb.add_field(name='Подробности:',value='Статус боты был изменён на дефолтный!')
-                await ctx.send(embed = emb)
+                mes = await ctx.send(embed = emb)
                 await ctx.message.delete()
                 await asyncio.sleep(15)
-                await emb.delete()
+                await mes.delete()
             else:
                 await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name="Версию {}".format(settings['version'])))
-                emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
+                emb = discord.Embed(title = 'Статус Мику', color = 0x00ff00)
                 emb.add_field(name='Подробности:',value='Статус боты был изменён на дефолтный!')
-                await ctx.send(embed = emb)
+                mes = await ctx.send(embed = emb)
                 await ctx.message.delete()
                 await asyncio.sleep(15)
-                await emb.delete()
-        elif act == "game":
+                await mes.delete()
+        elif act == "game" or act == "игра":
             if name != None:
                 await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name="{}".format(name)))
-                emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
+                emb = discord.Embed(title = 'Статус Мику', color = 0x00ff00)
                 emb.add_field(name='Подробности:',value='Статус боты был изменён на \"Играет в {}\"'.format(name))
-                await ctx.send(embed = emb)
+                mes = await ctx.send(embed = emb)
                 await ctx.message.delete()
                 await asyncio.sleep(15)
-                await emb.delete()
+                await mes.delete()
             else:
-                emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
+                emb = discord.Embed(title = 'Статус Мику', color = 0x00ff00)
                 emb.add_field(name='Ошибка:',value='Вы не указала название игры!')
-                await ctx.send(embed = emb)
+                mes = await ctx.send(embed = emb)
                 await ctx.message.delete()
                 await asyncio.sleep(15)
-                await emb.delete()
+                await mes.delete()
                 return
-        elif act == "stream":
+        elif act == "stream" or act == "стрим":
             if name != None:
                 if url != None:
                     await self.bot.change_presence(status = discord.Status.do_not_disturb, activity = discord.Streaming(name=name, url=url))
-                    emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
-                    emb.add_field(name='Подробности:',value='Статус боты был изменён на \"Стримит {}\"'.format(name))
-                    await ctx.send(embed = emb)
+                    emb = discord.Embed(title = 'Статус Мику', color = 0x00ff00)
+                    emb.add_field(name='Подробности:',value='Статус боты был изменён на \"Смотрит {}\"'.format(name))
+                    mes = await ctx.send(embed = emb)
                     await ctx.message.delete()
                     await asyncio.sleep(15)
-                    await emb.delete()
+                    await mes.delete()
                 else:
-                    emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
+                    emb = discord.Embed(title = 'Статус Мику', color = 0x00ff00)
                     emb.add_field(name='Ошибка:',value='Вы не указали ссылку на стрим!')
-                    await ctx.send(embed = emb)
+                    mes = await ctx.send(embed = emb)
                     await ctx.message.delete()
                     await asyncio.sleep(15)
-                    await emb.delete()
+                    await mes.delete()
                     return
             else:
-                emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
+                emb = discord.Embed(title = 'Статус Мику', color = 0x00ff00)
                 emb.add_field(name='Ошибка:',value='Вы не указали кого мы будем смотреть!')
-                await ctx.send(embed = emb)
+                mes = await ctx.send(embed = emb)
                 await ctx.message.delete()
                 await asyncio.sleep(15)
-                await emb.delete()
+                await mes.delete()
                 return
-        elif act == "Skrip_men":
-            await self.bot.change_presence(status = discord.Status.do_not_disturb, activity = discord.Streaming(name="Skr1pMen", url="https://www.twitch.tv/Skr1pmen"))
-            emb = discord.Embed(title = 'Статус Мику', colot = 0x00ff00)
-            emb.add_field(name='Подробности:',value='Статус боты был изменён на \"Стримит Skr1pMen\"')
-            await ctx.send(embed = emb)
+        elif act == "skr1pmen":
+            await self.bot.change_presence(status = discord.Status.do_not_disturb, activity = discord.Streaming(name="Skr1pMen", url="https://www.twitch.tv/skr1pmen"))
+            emb = discord.Embed(title = 'Статус Мику', color = 0x00ff00)
+            emb.add_field(name='Подробности:',value='Статус боты был изменён на \"Смотрит skr1pmen\"')
+            mes = await ctx.send(embed = emb)
             await ctx.message.delete()
             await asyncio.sleep(15)
-            await emb.delete()
+            await mes.delete()
+        elif act == "southpaw":
+            await self.bot.change_presence(status = discord.Status.do_not_disturb, activity = discord.Streaming(name="Skr1pMen", url="https://www.twitch.tv/southpaworlefty"))
+            emb = discord.Embed(title = 'Статус Мику', color = 0x00ff00)
+            emb.add_field(name='Подробности:',value='Статус боты был изменён на \"Смотрит Southpaw\"')
+            mes = await ctx.send(embed = emb)
+            await ctx.message.delete()
+            await asyncio.sleep(15)
+            await mes.delete()
 
 #Команда_invite
     @commands.command(pass_context=True, aliases=['инвайт', 'invite'])
-    async def __invite(self, ctx, member:discord.Member):
+    async def __invite(self, ctx, member:discord.Member ):
         invitelink = await ctx.channel.create_invite(max_uses=1,unique=True)
         await member.send("Вы были приглашены на сервер! Вот ссылочка на него: {}".format(invitelink))
         await ctx.message.delete()
@@ -517,7 +525,7 @@ class UserCommands(commands.Cog):
         await ctx.send(embed = emb)
 
     @__invite.error
-    async def __invite_error(ctx, error):
+    async def __invite_error(self, ctx, error):
         emb = discord.Embed(title= "",color = 0xff0000)
         emb.add_field(name="Ошибка команды ``.invite``:",value="Такого пользоватея нет")
         await ctx.send(embed = emb)
@@ -594,7 +602,6 @@ class UserCommands(commands.Cog):
     #         em.add_field(name = 'Оригинал текста:', value = f'{args}', inline = False)
     #         em.add_field(name = f'Перевод ({lang}):', value = f'{o.text}', inline = False)
     #     await ctx.send(embed = em)
-
 
 def setup(bot):
     bot.add_cog(UserCommands(bot))

@@ -1,6 +1,7 @@
 import asyncio
 import discord
 from discord.ext import commands
+from config import settings
 
 class AdministrationCommands(commands.Cog):
 
@@ -17,6 +18,12 @@ class AdministrationCommands(commands.Cog):
         emb.set_thumbnail(url= "https://i.gifer.com/fzm0.gif")
         await ctx.send(embed = emb)
         await ctx.message.delete()
+        if reason == None:
+            msg = f"{ctx.author.mention} выдал бан {user.mention}, по причине \"Не указано\"."
+        else:
+            msg = f"{ctx.author.mention} выдал бан {user.mention}, по причине \"{reason}\"."
+        channel = self.bot.get_channel(settings['logChannel'])
+        await channel.send(msg)
 
     @__ban.error
     async def __ban_error(self, ctx, error):
@@ -35,6 +42,9 @@ class AdministrationCommands(commands.Cog):
         emb.add_field(name="Великая пощада!",value="{} был успешно разбанен".format(user.name))
         await ctx.send(embed = emb)
         await ctx.message.delete()
+        msg = f"{ctx.author.mention} разбанил {user.mention}."
+        channel = self.bot.get_channel(settings['logChannel'])
+        await channel.send(msg)
 
     @__unban.error
     async def __unban_error(self, ctx, error):
@@ -45,13 +55,19 @@ class AdministrationCommands(commands.Cog):
 
 #Команда_banlist
     @commands.command(aliases=['банлист', 'banlist'])
-    @commands.has_permissions(administrator=True)
+    # @commands.has_permissions(administrator=True)
     async def __banlist(self, ctx):
         guild = ctx.guild
         bans = await guild.bans()
         emb = discord.Embed(title= "Список забаненых участников сервера:",color = 0x00ff00)
         for ban in bans:
-            emb.add_field(name="◙",value=ban[1:])
+            user = ban.user
+            reason = ban.reason
+            if reason == None:
+                emb.add_field(name=f"{user}",value=f"**Причина бана:** Нет данных!\n**ID:** {user.id}",inline = False)
+            else:
+                emb.add_field(name=f"{user}",value=f"**Причина бана:** {reason}!\n**ID:** {user.id}",inline = False)
+        emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
         await ctx.author.send(embed = emb)
         await ctx.message.delete()
 
@@ -73,6 +89,9 @@ class AdministrationCommands(commands.Cog):
         emb = discord.Embed(title= "",color = 0x00ff00)
         emb.add_field(name="Пошёл отдохнуть:",value="{} был кикнут с сервера, и ему выслано приглашение на сервер".format(member))
         await ctx.send(embed = emb)
+        msg = f"{ctx.author.mention} кикнул {member.mention}."
+        channel = self.bot.get_channel(settings['logChannel'])
+        await channel.send(msg)
 
     @__kick.error
     async def __kick_error(self, ctx, error):
@@ -86,9 +105,13 @@ class AdministrationCommands(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def __mute(self, ctx, user: discord.Member, time: int):
         role = user.guild.get_role(874610184692072478)
+        await ctx.message.delete()
         emb = discord.Embed(title= "",color = 0x00ff00)
         emb.add_field(name="Помолчи ка:",value=f'{user} получил мут на {time} минут')
         await ctx.send(embed = emb)
+        msg = f"{ctx.author.mention} заткнул {user.mention} на {time} минут."
+        channel = self.bot.get_channel(settings['logChannel'])
+        await channel.send(msg)
         await user.add_roles(role)
         await user.move_to(None)
         await asyncio.sleep(time * 60)
@@ -96,6 +119,10 @@ class AdministrationCommands(commands.Cog):
         emb = discord.Embed(title= "",color = 0x00ff00)
         emb.add_field(name="Научился говорить:",value=f'{user} наконец-то нашёл кнопку включения микрофона')
         await ctx.send(embed = emb)
+        msg = f"{user.mention} научился говорить после того как {ctx.author.mention} заткнул его."
+        channel = self.bot.get_channel(settings['logChannel'])
+        await channel.send(msg)
+        
 
     @__mute.error
     async def __mute_error(self, ctx, error):
