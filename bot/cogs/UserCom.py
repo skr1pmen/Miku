@@ -222,7 +222,7 @@ class UserCommands(commands.Cog):
 
 #Команда_help
     @commands.command(pass_context=True, aliases = ['хелп','help'])
-    async def __help1(self,ctx):
+    async def __help(self,ctx):
         buttons = [
             [
                 Button(style=ButtonStyle.green,label='rules'),
