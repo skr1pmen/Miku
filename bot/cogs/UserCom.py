@@ -221,7 +221,7 @@ class UserCommands(commands.Cog):
         await ctx.message.delete()
 
 #Команда_help
-    @commands.command(pass_context=True, aliases = ['хелп','help'])
+    @commands.command(pass_context=True, aliases = ['хелп','help','как'])
     async def __help(self,ctx):
         buttons = [
             [
@@ -505,7 +505,7 @@ class UserCommands(commands.Cog):
             await ctx.message.delete()
             await asyncio.sleep(15)
             await mes.delete()
-        elif act == "southpaw":
+        elif act == "southpaw" or act == "Southpaw":
             await self.bot.change_presence(status = discord.Status.do_not_disturb, activity = discord.Streaming(name="Skr1pMen", url="https://www.twitch.tv/southpaworlefty"))
             emb = discord.Embed(title = 'Статус Мику', color = 0x00ff00)
             emb.add_field(name='Подробности:',value='Статус боты был изменён на \"Смотрит Southpaw\"')
