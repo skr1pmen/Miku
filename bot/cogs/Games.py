@@ -8,6 +8,7 @@ from discord_components.dpy_overrides import send
 import psycopg2
 import random
 from discord_components import DiscordComponents,Button,ButtonStyle, component
+from config import settings
 import json
 
 #Для_Городов
@@ -112,22 +113,34 @@ class GamesForProgit(commands.Cog):
             if side_coin == 1:
                 await Mes.edit(content=f"Ты выбрал Орёл!\nВыпала Орёл!\nТы выиграл {coins*2}",components=[])
                 cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins,ctx.author.id))
+                msg = f"{ctx.author.mention} выиграл в монетку {coins*2}."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
                 if isPremium == True:
                     cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(coins, ctx.author.id))
             else:
                 await Mes.edit(content=f"Ты выбрал Орёл!\nВыпала Решка!\nТы проиграл {coins}",components=[])
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(coins,ctx.author.id))
+                msg = f"{ctx.author.mention} проиграл в монетку {coins}."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
                 if isPremium == True:
                     cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(coins, ctx.author.id))
         elif responce.component.id == 'two':
             if side_coin == 1:
                 await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Решка!\nТы выиграл {coins*2}",components=[])
                 cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins,ctx.author.id))
+                msg = f"{ctx.author.mention} выиграл в монетку {coins*2}."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
                 if isPremium == True:
                     cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(coins, ctx.author.id))
             else:
                 await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Орёл!\nТы проиграл {coins}",components=[])
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(coins,ctx.author.id))
+                msg = f"{ctx.author.mention} проиграл в монетку {coins}."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
                 if isPremium == True:
                     cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(coins, ctx.author.id))
         connection.commit()
@@ -147,7 +160,7 @@ class GamesForProgit(commands.Cog):
                 title = "Мини-Игра: 🎰 Казино",
                 description = f"Коротко о правилах:\n\
                     •Начиная игру вы делаете фиксированную ставку в 100:leaves:\n\
-                    •Цель игрока отгадать число от 000 до 999, если игрок отдагал число, то он получает Jackpot\n\
+                    •Цель игрока отгадать число от 000 до 999, если игрок отгадал число, то он получает Jackpot\n\
                     •Jackpot составляет всю сумму которую проиграли предыдущие игроки\n\
                     Jackpot на данный момент составляет: {Jackpot}:leaves:",
                 color = 0x00d166
@@ -164,15 +177,7 @@ class GamesForProgit(commands.Cog):
                 await ctx.message.delete()
                 await asyncio.sleep(30)
                 await Mes.delete()
-        elif number < 0:
-            emb = discord.Embed(color=0xa62019)
-            emb.add_field(name='❌ Ошибка!',value=f'Необходимо число от 0 до 999!')
-            Mes = await ctx.send(embed = emb)
-            await ctx.message.delete()
-            await asyncio.sleep(30)
-            await Mes.delete()
-            return False
-        elif number > 999:
+        elif number < 0 or number > 999:
             emb = discord.Embed(color=0xa62019)
             emb.add_field(name='❌ Ошибка!',value=f'Необходимо число от 0 до 999!')
             Mes = await ctx.send(embed = emb)
@@ -196,7 +201,7 @@ class GamesForProgit(commands.Cog):
                 return False
             if number == casinoResult:
                 cursor.execute(f"UPDATE users SET cash = cash + {Jackpot} WHERE id = {ctx.author.id}")
-                cursor.execute("UPDATE cashcasino SET cash = cash - cahs WHERE server_id = {0}".format(ctx.guild.id))
+                cursor.execute("UPDATE cashcasino SET cash = cash - cash WHERE server_id = {0}".format(ctx.guild.id))
                 cursor.execute("SELECT cash FROM cashcasino WHERE server_id = {}".format(ctx.guild.id))
                 Jackpot = cursor.fetchone()[0]
                 cursor.execute("SELECT cash FROM users WHERE id = {}".format(ctx.author.id))
@@ -210,6 +215,9 @@ class GamesForProgit(commands.Cog):
                 await ctx.message.delete()
                 await asyncio.sleep(30)
                 await Mes.delete()
+                msg = f"{ctx.author.mention} выиграл в казино {Jackpot}\nКак он это вообще сделал?!?."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
             else:
                 cursor.execute(f"UPDATE users SET cash = cash - 100 WHERE id = {ctx.author.id}")
                 cursor.execute("UPDATE CashCasino SET cash = cash + 100 WHERE server_id = {0}".format(ctx.guild.id))
@@ -226,6 +234,9 @@ class GamesForProgit(commands.Cog):
                 await ctx.message.delete()
                 await asyncio.sleep(30)
                 await Mes.delete()
+                msg = f"{ctx.author.mention} проиграл в казино."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
 
 # #Города
 #     @commands.command(aliases=['города','city'])
