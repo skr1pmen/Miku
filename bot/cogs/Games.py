@@ -113,7 +113,7 @@ class GamesForProgit(commands.Cog):
             if side_coin == 1:
                 await Mes.edit(content=f"Ты выбрал Орёл!\nВыпала Орёл!\nТы выиграл {coins*2}",components=[])
                 cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins,ctx.author.id))
-                msg = f"{ctx.author.mention} выиграл в монетку {coins*2}."
+                msg = f"{ctx.author.mention} выиграл в монетку {coins*2} :leaves:."
                 channel = self.bot.get_channel(settings['logChannel'])
                 await channel.send(msg)
                 if isPremium == True:
@@ -121,7 +121,7 @@ class GamesForProgit(commands.Cog):
             else:
                 await Mes.edit(content=f"Ты выбрал Орёл!\nВыпала Решка!\nТы проиграл {coins}",components=[])
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(coins,ctx.author.id))
-                msg = f"{ctx.author.mention} проиграл в монетку {coins}."
+                msg = f"{ctx.author.mention} проиграл в монетку {coins} :leaves:."
                 channel = self.bot.get_channel(settings['logChannel'])
                 await channel.send(msg)
                 if isPremium == True:
@@ -130,7 +130,7 @@ class GamesForProgit(commands.Cog):
             if side_coin == 1:
                 await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Решка!\nТы выиграл {coins*2}",components=[])
                 cursor.execute("UPDATE users SET cash = cash + {0} WHERE id = {1}".format(coins,ctx.author.id))
-                msg = f"{ctx.author.mention} выиграл в монетку {coins*2}."
+                msg = f"{ctx.author.mention} выиграл в монетку {coins*2} :leaves:."
                 channel = self.bot.get_channel(settings['logChannel'])
                 await channel.send(msg)
                 if isPremium == True:
@@ -138,7 +138,7 @@ class GamesForProgit(commands.Cog):
             else:
                 await Mes.edit(content=f"Ты выбрал Решка!\nВыпала Орёл!\nТы проиграл {coins}",components=[])
                 cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(coins,ctx.author.id))
-                msg = f"{ctx.author.mention} проиграл в монетку {coins}."
+                msg = f"{ctx.author.mention} проиграл в монетку {coins} :leaves:."
                 channel = self.bot.get_channel(settings['logChannel'])
                 await channel.send(msg)
                 if isPremium == True:
@@ -215,7 +215,7 @@ class GamesForProgit(commands.Cog):
                 await ctx.message.delete()
                 await asyncio.sleep(30)
                 await Mes.delete()
-                msg = f"{ctx.author.mention} выиграл в казино {Jackpot}\nКак он это вообще сделал?!?."
+                msg = f"{ctx.author.mention} выиграл в казино {Jackpot} :leaves:\nКак он это вообще сделал?!?."
                 channel = self.bot.get_channel(settings['logChannel'])
                 await channel.send(msg)
             else:
