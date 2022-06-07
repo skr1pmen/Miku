@@ -38,7 +38,9 @@ class StastUsers(commands.Cog):
             premium BOOLEAN,
             cash BIGINT,
             spent BIGINT,
-            server_id BIGINT
+            server_id BIGINT,
+            warns BIGINT,
+            bad_omen BIGINT
         )""")
 
         cursor.execute("""CREATE TABLE IF NOT EXISTS shop(
@@ -59,7 +61,7 @@ class StastUsers(commands.Cog):
                 results = cursor.fetchone()
                 if not member.bot:
                     if results is None:
-                        cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',false,0,0,'{guild.id}')")
+                        cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',false,0,0,'{guild.id}',0,0)")
                     else: pass
             cursor.execute(f"SELECT cash FROM CashCasino WHERE server_id = {guild.id}")
             serverCash = cursor.fetchone()
@@ -75,7 +77,7 @@ class StastUsers(commands.Cog):
         results = cursor.fetchone()
         if not member.bot:
             if results is None:
-                cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{member.guild.id}')")
+                cursor.execute(f"INSERT INTO users VALUES ('{member}','{member.id}',0,'{member.guild.id},0,0')")
                 connection.commit()
             else:pass
 
@@ -92,7 +94,122 @@ class StastUsers(commands.Cog):
         #     await asyncio.sleep(60)
 
         if {i.lower().translate(str.maketrans('','',string.punctuation)) for i in message.content.split(' ')}.intersection(set(json.load(open('bot/textFile/cenz.json')))) != set():
+            role = message.author.guild.get_role(874610184692072478)
+
+            cursor.execute(f"UPDATE users SET warns = warns + 1 WHERE id = {message.author.id}")
+            
             Mes = await message.channel.send(random.choice(OffMat).format(message.author.mention))
+
+            cursor.execute(f"SELECT warns FROM users WHERE id = {message.author.id}")
+            Warns = cursor.fetchone()[0]
+            cursor.execute(f"SELECT bad_omen FROM users WHERE id = {message.author.id}")
+            Bad_Omen = cursor.fetchone()[0]
+
+            if Warns >= 5 and Bad_Omen == 0:
+                cursor.execute(f"UPDATE users SET bad_omen = bad_omen + 1 WHERE id = {message.author.id}")
+                cursor.execute(f"UPDATE users SET warns = 0 WHERE id = {message.author.id}")
+                
+                emb=discord.Embed(title="Оповещение от Мику!", description="Мут", color=0xff0000)
+                emb.add_field(name="Вам был выдан мут на 5 минут", value="Причина: Мат", inline=False)
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await message.author.send(embed=emb)
+
+                msg = f"Мику заткнула {message.author.mention} на 5 минут."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
+
+                await message.author.add_roles(role)
+                await message.author.move_to(None)
+                await asyncio.sleep(5 * 60)
+                await message.author.remove_roles(role)  
+            elif Warns >= 5 and Bad_Omen == 1:
+                cursor.execute(f"UPDATE users SET bad_omen = bad_omen + 1 WHERE id = {message.author.id}")
+                cursor.execute(f"UPDATE users SET warns = 0 WHERE id = {message.author.id}")
+                
+                emb=discord.Embed(title="Оповещение от Мику!", description="Мут", color=0xff0000)
+                emb.add_field(name="Вам был выдан мут на 15 минут", value="Причина: Мат", inline=False)
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await message.author.send(embed=emb)
+
+                msg = f"Мику заткнула {message.author.mention} на 15 минут."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
+
+                await message.author.add_roles(role)
+                await message.author.move_to(None)
+                await asyncio.sleep(15 * 60)
+                await message.author.remove_roles(role)
+            elif Warns >= 5 and Bad_Omen == 2:
+                cursor.execute(f"UPDATE users SET bad_omen = bad_omen + 1 WHERE id = {message.author.id}")
+                cursor.execute(f"UPDATE users SET warns = 0 WHERE id = {message.author.id}")
+                
+                emb=discord.Embed(title="Оповещение от Мику!", description="Мут", color=0xff0000)
+                emb.add_field(name="Вам был выдан мут на 30 минут", value="Причина: Мат", inline=False)
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await message.author.send(embed=emb)
+
+                msg = f"Мику заткнула {message.author.mention} на 30 минут."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
+
+                await message.author.add_roles(role)
+                await message.author.move_to(None)
+                await asyncio.sleep(30 * 60)
+                await message.author.remove_roles(role)
+            elif Warns >= 5 and Bad_Omen == 3:
+                cursor.execute(f"UPDATE users SET bad_omen = bad_omen + 1 WHERE id = {message.author.id}")
+                cursor.execute(f"UPDATE users SET warns = 0 WHERE id = {message.author.id}")
+                
+                emb=discord.Embed(title="Оповещение от Мику!", description="Мут", color=0xff0000)
+                emb.add_field(name="Вам был выдан мут на 1 час", value="Причина: Мат", inline=False)
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await message.author.send(embed=emb)
+
+                msg = f"Мику заткнула {message.author.mention} на 1 час."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
+
+                await message.author.add_roles(role)
+                await message.author.move_to(None)
+                await asyncio.sleep(60 * 60)
+                await message.author.remove_roles(role)
+            elif Warns >= 5 and Bad_Omen == 4:
+                cursor.execute(f"UPDATE users SET bad_omen = bad_omen + 1 WHERE id = {message.author.id}")
+                cursor.execute(f"UPDATE users SET warns = 0 WHERE id = {message.author.id}")
+                
+                emb=discord.Embed(title="Оповещение от Мику!", description="Мут", color=0xff0000)
+                emb.add_field(name="Вам был выдан мут на 1 сутки", value="Причина: Мат", inline=False)
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await message.author.send(embed=emb)
+
+                msg = f"Мику заткнула {message.author.mention} на 1 сутки."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
+
+                await message.author.add_roles(role)
+                await message.author.move_to(None)
+                await asyncio.sleep(24 * 60 * 60)
+                await message.author.remove_roles(role)
+            elif Warns >= 10 and Bad_Omen == 5:
+                cursor.execute(f"UPDATE users SET bad_omen = 0 WHERE id = {message.author.id}")
+                cursor.execute(f"UPDATE users SET warns = 0 WHERE id = {message.author.id}")
+                
+                emb=discord.Embed(title="Оповещение от Мику!", description="Мут", color=0xff0000)
+                emb.add_field(name="Вам был выдан бан", value="Причина: Мат", inline=False)
+                emb.set_image(url= "https://thumbs.gfycat.com/AcceptableAgitatedBarbet-size_restricted.gif")
+                emb.set_footer(text="Все права защищены Miku©", icon_url= self.bot.user.avatar_url )
+                await message.author.send(embed=emb)
+
+                await message.author.ban(reason="Мат")
+
+                msg = f"Мику выдала бан {message.author.mention}, по причине \"Мат\"."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
+
+                emb = discord.Embed(title= "",color = 0x00ff00)
+                emb.add_field(name="Вам бан!",value="{} был успешно забанен Мику".format(message.author.name))
+                emb.set_image(url= "https://thumbs.gfycat.com/AcceptableAgitatedBarbet-size_restricted.gif")
+                await message.channel.send(embed = emb)
             await asyncio.sleep(30)
             await Mes.delete()
 
@@ -342,6 +459,9 @@ class StastUsers(commands.Cog):
                 cursor.execute(f"UPDATE users SET cash = cash - {amount} WHERE id = {ctx.author.id}")
                 connection.commit()
                 await ctx.send(embed=discord.Embed(description = "✅ Перевод прошёл успешно!", color = 0x00d166))
+                msg = f"{ctx.author.mention} перевёл {member.mention} {amount} :leaves:."
+                channel = self.bot.get_channel(settings['logChannel'])
+                await channel.send(msg)
                 await ctx.message.delete()
             elif amount >= resilts_one:
                 Mes = await ctx.send(embed=discord.Embed(description = "❌ У тебя недостаточно денег!", color = 0xa62019))
