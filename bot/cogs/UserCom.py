@@ -162,10 +162,12 @@ class UserCommands(commands.Cog):
         idle = Image.open('img/idle.png').convert('RGBA')
         dnd = Image.open('img/dnd.png').convert('RGBA')
         premImg = Image.open('img/prem.png').convert('RGBA')
+        bad_omen = Image.open('img/bad_omen.png').convert('RGBA')
 
         font = ImageFont.truetype('img/arial.ttf', size=38)
         AKAfont = ImageFont.truetype('img/arial.ttf', size=30)
         subfont = ImageFont.truetype('img/arial.ttf', size=25)
+        bad_omen_font = ImageFont.truetype('img/minecraft.ttf', size=46)
 
         if status == 'online':
             pfp.paste(online,(140,140),online)
@@ -178,6 +180,78 @@ class UserCommands(commands.Cog):
 
         if prem == True:
             background.paste(premImg,(270,175),premImg)
+
+        cursor.execute(f"SELECT bad_omen FROM users WHERE id = {member.id}")
+        Bad_Omen = cursor.fetchone()[0]
+        offset = 3
+        shadowColor = 'black'
+        x = 100
+        y = 94
+        if Bad_Omen == 1:
+            bad_omen_lvl="I"
+            for off in range(offset):
+                draw.text((x-off, y), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x-off, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x-off, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+            draw.text((x,y),bad_omen_lvl,font=bad_omen_font)
+            background.paste(bad_omen,(0,0),bad_omen)
+        elif Bad_Omen == 2:
+            bad_omen_lvl="II"
+            for off in range(offset):
+                draw.text((x-off, y), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x-off, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x-off, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+            draw.text((x,y),bad_omen_lvl,font=bad_omen_font)
+            background.paste(bad_omen,(0,0),bad_omen)
+        elif Bad_Omen == 3:
+            bad_omen_lvl="III"
+            for off in range(offset):
+                draw.text((x-off, y), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x-off, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x-off, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+            draw.text((x,y),bad_omen_lvl,font=bad_omen_font)
+            background.paste(bad_omen,(0,0),bad_omen)
+        elif Bad_Omen == 4:
+            bad_omen_lvl="IV"
+            for off in range(offset):
+                draw.text((x-off, y), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x-off, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x-off, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+            draw.text((x,y),bad_omen_lvl,font=bad_omen_font)
+            background.paste(bad_omen,(0,0),bad_omen)
+        elif Bad_Omen == 5:
+            bad_omen_lvl="V"
+            for off in range(offset):
+                draw.text((x-off, y), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x-off, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y+off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x-off, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+                draw.text((x+off, y-off), bad_omen_lvl, font=bad_omen_font, fill=shadowColor)
+            draw.text((x,y),bad_omen_lvl,font=bad_omen_font)
+            background.paste(bad_omen,(0,0),bad_omen)
 
         draw.text((280,240),name,font=font)
         draw.text((275,320),nick,font=AKAfont)
