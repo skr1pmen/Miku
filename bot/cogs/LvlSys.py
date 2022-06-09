@@ -388,24 +388,44 @@ class StastUsers(commands.Cog):
             isPremium = cursor.fetchone()[0]
             cursor.execute(f"SELECT cash FROM users WHERE id = {author.id}")
             cash = cursor.fetchone()[0]
+            cursor.execute(f"SELECT bad_omen FROM users WHERE id = {author.id}")
+            Bad_Omen = cursor.fetchone()[0]
 
             if cost <= cash:
                 if itemType == "sub":
                     if isPremium == True:
-                        await responce.reply(f"{author.mention}, у вас уже имеется премиум подписка")
+                        await responce.reply(f"{author.mention}, у вас уже имеется премиум подписка.")
                     if isPremium == False:
                         cursor.execute(f"UPDATE users SET premium = true WHERE id = {author.id}")
                         cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(cost, author.id))
                         await responce.reply(embed=discord.Embed(description = "✅ Покупка прошла успешно!", color = 0x00d166))
+                        msg = f"{author.mention} преобрёл \"Премиум подписку\"."
+                        channel = self.bot.get_channel(settings['logChannel'])
+                        await channel.send(msg)
                 elif itemType == "role":
                     if role in author.roles:
-                        await responce.reply(f"{author.mention}, у вас уже имеется данная роль")
+                        await responce.reply(f"{author.mention}, у вас уже имеется данная роль.")
                     else:
                         await author.add_roles(role)
                         cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(cost, author.id))
                         if isPremium == True:
                             cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(cost, author.id))
                         await responce.reply(embed=discord.Embed(description = "✅ Покупка прошла успешно!", color = 0x00d166))
+                        msg = f"{author.mention} преобрёл роль: \"{role}\"."
+                        channel = self.bot.get_channel(settings['logChannel'])
+                        await channel.send(msg)
+                elif itemType == "bad_omen":
+                    if Bad_Omen == 0:
+                        await responce.reply(f"{author.mention}, у вас 0 уровень предупреждений.")
+                    if Bad_Omen >= 1:
+                        if isPremium == True:
+                            cursor.execute("UPDATE users SET spent = spent + {0} WHERE id = {1}".format(cost, author.id))
+                        cursor.execute(f"UPDATE users SET bad_omen = bad_omen - 1 WHERE id = {author.id}")
+                        cursor.execute("UPDATE users SET cash = cash - {0} WHERE id = {1}".format(cost, author.id))
+                        await responce.reply(embed=discord.Embed(description = "✅ Покупка прошла успешно!", color = 0x00d166))
+                        msg = f"{author.mention} преобрёл \"Понижение уровня предупреждения\"."
+                        channel = self.bot.get_channel(settings['logChannel'])
+                        await channel.send(msg)
                 await mes.delete()
             else:
                 await responce.reply(f"{author.mention}, у тебя недостаточно средст для покупки данного товара")
