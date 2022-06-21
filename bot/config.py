@@ -1,5 +1,5 @@
 settings={
-    'token': 'NTUzNTM4ODczODI1Njg5NjAw.XIJRPw.Rzeq0khZBCoXGdPAa9Wufv1PV30',
+    'token': 'NTUzNTM4ODczODI1Njg5NjAw.GNjoXJ.pK7T951JwpuuIPeoZy_7X0q4HwFadC1V6KrBVo',
     'version': '4.8.1',
     'prefix': '.',
     'guild_ids': '547094388539392000',
